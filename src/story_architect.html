@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local Story Architect</title>
     <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
     <style>
         :root {
             --accent-color: #f9e2af; /* Gold for storytelling */
@@ -34,6 +35,7 @@
 <body>
 
 <div class="container">
+    <a href="index.html" class="back-link">← Back to Dashboard</a>
     <h1>Story Architect</h1>
     
     <div class="status-bar">
@@ -105,8 +107,10 @@
     window.onload = async () => {
         const { provider, base } = getConfig();
         if (provider === 'gemini') {
-            document.getElementById('status-text').innerText = "Gemini Provider Selected (Adapter In Progress)";
-            document.getElementById('model-select').innerHTML = '<option>gemini-pro</option>';
+            document.getElementById('status-text').innerText = "Gemini Connected";
+            const model = localStorage.getItem('gemini_model') || "gemini-1.5-flash";
+            document.getElementById('model-select').innerHTML = `<option value="${model}">${model}</option>`;
+            document.getElementById('status-dot').classList.add('online');
             return;
         }
 
@@ -146,7 +150,26 @@
         const stopBtn = document.getElementById('stop-btn');
         
         if (provider === 'gemini') {
-            alert("Gemini support is currently in progress. Please switch to LM Studio or Ollama in Settings.");
+            const apiKey = localStorage.getItem('gemini_api_key');
+            
+            // UI Loading State
+            btn.disabled = true; 
+            document.getElementById('btn-text').style.display = 'none'; 
+            loader.style.display = 'block';
+            stopBtn.style.display = 'block';
+            resultArea.value = "";
+            thinkingContent.textContent = "";
+            thinkingContainer.style.display = 'none';
+
+            const userPrompt = `Premise: ${premise}\nGenre/Tone: ${genre}\nTarget Length: ${wc}\n\nPlease generate the Story Bible now.`;
+
+            await generateGemini(
+                [{ role: "system", content: ARCHITECT_PROMPT }, { role: "user", content: userPrompt }],
+                model, apiKey,
+                (chunk) => { out.style.display = 'block'; resultArea.value += chunk; resultArea.scrollTop = resultArea.scrollHeight; },
+                () => { btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; },
+                (err) => { alert(err.message); btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; }
+            );
             return;
         }
 

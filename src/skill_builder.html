@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skill Builder</title>
     <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
     <style>
         :root {
             --accent-color: #f38ba8; /* Red/Pink for Skills/Tools */
@@ -19,6 +20,7 @@
 <body>
 
 <div class="container">
+    <a href="index.html" class="back-link">← Back to Dashboard</a>
     <h1>Skill Builder</h1>
     <div class="status-bar">
         <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
@@ -69,8 +71,10 @@
     window.onload = async () => {
         const { provider, base } = getConfig();
         if (provider === 'gemini') {
-            document.getElementById('status-text').innerText = "Gemini Provider Selected (Adapter In Progress)";
-            document.getElementById('model-select').innerHTML = '<option>gemini-pro</option>';
+            document.getElementById('status-text').innerText = "Gemini Connected";
+            const model = localStorage.getItem('gemini_model') || "gemini-1.5-flash";
+            document.getElementById('model-select').innerHTML = `<option value="${model}">${model}</option>`;
+            document.getElementById('status-dot').classList.add('online');
             return;
         }
 
@@ -103,7 +107,24 @@
         const stopBtn = document.getElementById('stop-btn');
 
         if (provider === 'gemini') {
-            alert("Gemini support is currently in progress. Please switch to LM Studio or Ollama in Settings.");
+            const apiKey = localStorage.getItem('gemini_api_key');
+            
+            // UI Loading State
+            btn.disabled = true; 
+            document.getElementById('btn-text').style.display = 'none'; 
+            loader.style.display = 'block';
+            stopBtn.style.display = 'block';
+            resArea.value = "";
+            thinkContent.textContent = "";
+            thinkBox.style.display = 'none';
+
+            await generateGemini(
+                [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: `Skill Name: ${name}\nDescription: ${desc}\nInputs/Outputs: ${io}\n\nGenerate the SKILLS.md content.` }],
+                model, apiKey,
+                (chunk) => { out.style.display = 'block'; resArea.value += chunk; resArea.scrollTop = resArea.scrollHeight; },
+                () => { btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; },
+                (err) => { alert(err.message); btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; }
+            );
             return;
         }
 

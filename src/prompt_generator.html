@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local System Prompt Generator</title>
     <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
 </head>
 <body>
 
 <div class="container">
+    <a href="index.html" class="back-link">← Back to Dashboard</a>
     <h1>System Prompt Generator</h1>
     
     <div class="status-bar">
@@ -70,8 +72,10 @@
     window.onload = async () => {
         const { provider, base } = getConfig();
         if (provider === 'gemini') {
-            document.getElementById('status-text').innerText = "Gemini Provider Selected (Adapter In Progress)";
-            document.getElementById('model-select').innerHTML = '<option>gemini-pro</option>';
+            document.getElementById('status-text').innerText = "Gemini Connected";
+            const model = localStorage.getItem('gemini_model') || "gemini-1.5-flash";
+            document.getElementById('model-select').innerHTML = `<option value="${model}">${model}</option>`;
+            document.getElementById('status-dot').classList.add('online');
             return;
         }
 
@@ -115,7 +119,24 @@
         const stopBtn = document.getElementById('stop-btn');
 
         if (provider === 'gemini') {
-            alert("Gemini support is currently in progress. Please switch to LM Studio or Ollama in Settings.");
+            const apiKey = localStorage.getItem('gemini_api_key');
+            
+            // UI Loading State
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
+            outputContainer.style.display = 'none';
+            resultArea.value = "";
+            thinkingContainer.style.display = 'none';
+            stopBtn.style.display = 'block';
+
+            await generateGemini(
+                [{ role: "system", content: META_SYSTEM_PROMPT }, { role: "user", content: `Create a system prompt for this request: "${input}"` }],
+                modelId, apiKey,
+                (chunk) => { outputContainer.style.display = 'block'; resultArea.value += chunk; resultArea.scrollTop = resultArea.scrollHeight; },
+                () => { btn.disabled = false; btnText.style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; },
+                (err) => { alert(err.message); btn.disabled = false; btnText.style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; }
+            );
             return;
         }
 

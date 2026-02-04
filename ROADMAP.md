@@ -21,28 +21,23 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
 - **Agent & Skill Builders**:
   - [x] `agent_builder.html`: Tool to generate `AGENT.md` definitions.
   - [x] `skill_builder.html`: Tool to generate `SKILLS.md` definitions.
+  - [x] `code_janitor.html`: Tool to refactor code.
+  - [x] `email_polisher.html`: Tool to draft emails with tone selection.
 
 ## 🔌 Provider Integration (In Progress)
 - **Ollama Support**:
   - [x] Update tools to switch base URL based on settings.
 - **Google Gemini Support**:
-  - [ ] Implement Gemini API adapter (requires different JSON payload structure).
+  - [x] Implement Gemini API adapter (`src/utils.js`).
+  - [x] Refactor tools to use `utils.js` and support Gemini switching.
 
 ## 🛠️ Planned Tools
 
-### 1. The "Code Janitor" (Refactorer)
-- **Goal**: Clean up spaghetti code without sending it to the cloud.
-- **Features**: Input code block -> Refactored code + Explanation (Focus on readability/PEP8).
-
-### 2. The "Email Polisher"
-- **Goal**: Draft professional communications quickly.
-- **Features**: Tone Selector (Professional, Empathetic, Stern) + Grammar fix.
-
-### 3. The "Universal Translator" (JSON Localizer)
+### 1. The "Universal Translator" (JSON Localizer)
 - **Goal**: Localize app UI strings for developers.
 - **Features**: Input JSON -> Translated JSON preserving keys.
 
-### 4. The "Regex Wizard"
+### 2. The "Regex Wizard"
 - **Goal**: Generate complex Regular Expressions from plain English.
 
 ## 🔮 Future Enhancements

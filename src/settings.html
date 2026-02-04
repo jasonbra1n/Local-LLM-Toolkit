@@ -17,6 +17,7 @@
 </head>
 <body>
 <div class="container">
+    <a href="index.html" class="back-link">← Back to Dashboard</a>
     <h1>Settings</h1>
     
     <label>Active AI Provider:</label>
@@ -45,6 +46,9 @@
         <label>API Key:</label>
         <input type="password" id="gemini-key" placeholder="AIzaSy...">
         <span class="note">Get a free key from Google AI Studio.</span>
+        <label style="margin-top: 10px; display: block;">Model ID:</label>
+        <input type="text" id="gemini-model" placeholder="gemini-1.5-flash">
+        <span class="note">Default: gemini-1.5-flash</span>
     </div>
 
     <h3>Global Defaults</h3>
@@ -52,7 +56,6 @@
     <input type="range" id="global-temp" min="0" max="1" step="0.1" value="0.7" style="width:100%; margin-bottom: 20px;" oninput="document.getElementById('temp-val').innerText = this.value">
 
     <button onclick="saveSettings()">Save Settings</button>
-    <a href="index.html" class="back-link">← Back to Dashboard</a>
 </div>
 <script>
     window.onload = () => {
@@ -64,6 +67,7 @@
         document.getElementById('lm-url').value = localStorage.getItem('lm_studio_url') || "http://127.0.0.1:1234/v1";
         document.getElementById('ollama-url').value = localStorage.getItem('ollama_url') || "http://127.0.0.1:11434/v1";
         document.getElementById('gemini-key').value = localStorage.getItem('gemini_api_key') || "";
+        document.getElementById('gemini-model').value = localStorage.getItem('gemini_model') || "gemini-1.5-flash";
         document.getElementById('global-temp').value = localStorage.getItem('global_temperature') || "0.7";
         document.getElementById('temp-val').innerText = document.getElementById('global-temp').value;
 
@@ -83,6 +87,7 @@
         localStorage.setItem('lm_studio_url', document.getElementById('lm-url').value.replace(/\/+$/, ""));
         localStorage.setItem('ollama_url', document.getElementById('ollama-url').value.replace(/\/+$/, ""));
         localStorage.setItem('gemini_api_key', document.getElementById('gemini-key').value.trim());
+        localStorage.setItem('gemini_model', document.getElementById('gemini-model').value.trim() || "gemini-1.5-flash");
         localStorage.setItem('global_temperature', document.getElementById('global-temp').value);
 
         alert("Settings Saved!");

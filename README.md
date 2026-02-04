@@ -4,7 +4,7 @@ A suite of privacy-focused, local AI tools designed to run entirely in your brow
 
 ## 🌟 Features
 
-- **Local & Private**: No data leaves your machine. Connects directly to `localhost`.
+- **Local & Private**: No data leaves your machine. Connects directly to `localhost`. API Keys (if used for external providers) are stored in your browser's **Local Storage**, not cookies, and are never sent to a backend server.
 - **Modular Tools**:
   - **Prompt Generator**: Create robust system prompts using meta-prompting.
   - **Story Architect**: Generate comprehensive story bibles and outlines.
@@ -37,6 +37,7 @@ A suite of privacy-focused, local AI tools designed to run entirely in your brow
 - `STYLE_GUIDE.md`: CSS variables and coding patterns.
 - `CONTRIBUTING.md`: Guidelines for adding new tools.
 - `ROADMAP.md`: Future plans and progress tracking.
+- `SCRATCHPAD.md`: A temporary workspace for tracking current session goals and active thoughts.
 
 ## 🤝 Contributing
 

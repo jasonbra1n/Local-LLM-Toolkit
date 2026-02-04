@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - **Skill Builder**: Tool to define AI skills and save as `SKILLS.md`.
 - **Settings**: Global configuration page for Multi-Provider support (LM Studio, Ollama, Gemini) and global temperature.
 - **Shared Assets**: Created `style.css` to centralize theming across all tools.
+- **Google Gemini Support**: Full integration with Google's Gemini API (Flash/Pro) via `utils.js` adapter.
 
 ### Features
 - **Streaming**: Real-time text generation support for all tools.
@@ -28,6 +29,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Refactored all tools to use centralized configuration from `settings.html`.
+- Refactored all tools to use `utils.js` for shared logic and provider switching.
 - Refactored all HTML tools to use the shared `style.css` file, removing redundant code.
 - Added visual icons to the Dashboard cards for better UX.
 
