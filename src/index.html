@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local LLM Toolkit</title>
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --card-bg: #2b2b3f;
+            --text-color: #cdd6f4;
+            --accent-color: #89b4fa;
+            --hover-bg: #313244;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.2s, background-color 0.2s;
+            border: 1px solid #45475a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background-color: var(--hover-bg);
+            border-color: var(--accent-color);
+        }
+
+        .card h2 {
+            margin: 0 0 10px 0;
+            color: var(--accent-color);
+        }
+
+        .card p {
+            margin: 0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Local LLM Toolkit</h1>
+    <div class="grid">
+        <a href="prompt_generator.html" class="card">
+            <h2>Prompt Generator</h2>
+            <p>Create robust system prompts for any persona.</p>
+        </a>
+        <a href="story_architect.html" class="card">
+            <h2>Story Architect</h2>
+            <p>Generate story bibles, characters, and outlines.</p>
+        </a>
+        <a href="agent_builder.html" class="card">
+            <h2>Agent Builder</h2>
+            <p>Define AI Agents and generate AGENT.md files.</p>
+        </a>
+        <a href="skill_builder.html" class="card">
+            <h2>Skill Builder</h2>
+            <p>Create reusable Skills and generate SKILLS.md files.</p>
+        </a>
+        <a href="settings.html" class="card" style="border-color: #45475a;">
+            <h2 style="color: #a6adc8;">⚙️ Settings</h2>
+            <p>Configure API endpoints.</p>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

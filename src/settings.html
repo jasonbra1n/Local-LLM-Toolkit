@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --card-bg: #2b2b3f;
+            --text-color: #cdd6f4;
+            --accent-color: #89b4fa;
+            --button-hover: #b4befe;
+            --input-bg: #181825;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 { color: var(--accent-color); text-align: center; margin-top: 0; }
+        h3 { border-bottom: 1px solid #45475a; padding-bottom: 10px; margin-top: 30px; color: var(--text-color); }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input[type="text"], input[type="password"], select, input[type="number"] {
+            width: 100%; background-color: var(--input-bg); border: 1px solid #45475a;
+            color: var(--text-color); padding: 12px; border-radius: 6px; box-sizing: border-box;
+            font-family: inherit; margin-bottom: 15px;
+        }
+        button {
+            background-color: var(--accent-color); color: var(--bg-color); border: none;
+            padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer;
+            width: 100%; font-size: 1rem; transition: background 0.2s;
+        }
+        button:hover { background-color: var(--button-hover); }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: var(--accent-color); text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .provider-section { display: none; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 20px; }
+        .provider-section.active { display: block; }
+        .note { font-size: 0.8rem; opacity: 0.7; margin-top: -10px; margin-bottom: 15px; display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Settings</h1>
+    
+    <label>Active AI Provider:</label>
+    <select id="provider-select" onchange="updateUI()">
+        <option value="lm-studio">LM Studio (Local)</option>
+        <option value="ollama">Ollama (Local)</option>
+        <option value="gemini">Google Gemini (Cloud)</option>
+    </select>
+
+    <!-- LM Studio Config -->
+    <div id="lm-studio-config" class="provider-section">
+        <label>Base URL:</label>
+        <input type="text" id="lm-url" placeholder="http://127.0.0.1:1234/v1">
+        <span class="note">Default: http://127.0.0.1:1234/v1</span>
+    </div>
+
+    <!-- Ollama Config -->
+    <div id="ollama-config" class="provider-section">
+        <label>Base URL:</label>
+        <input type="text" id="ollama-url" placeholder="http://127.0.0.1:11434/v1">
+        <span class="note">Default: http://127.0.0.1:11434/v1</span>
+    </div>
+
+    <!-- Gemini Config -->
+    <div id="gemini-config" class="provider-section">
+        <label>API Key:</label>
+        <input type="password" id="gemini-key" placeholder="AIzaSy...">
+        <span class="note">Get a free key from Google AI Studio.</span>
+    </div>
+
+    <h3>Global Defaults</h3>
+    <label>Temperature (Creativity): <span id="temp-val">0.7</span></label>
+    <input type="range" id="global-temp" min="0" max="1" step="0.1" value="0.7" style="width:100%; margin-bottom: 20px;" oninput="document.getElementById('temp-val').innerText = this.value">
+
+    <button onclick="saveSettings()">Save Settings</button>
+    <a href="index.html" class="back-link">← Back to Dashboard</a>
+</div>
+<script>
+    window.onload = () => {
+        // Load Provider
+        const provider = localStorage.getItem('active_provider') || 'lm-studio';
+        document.getElementById('provider-select').value = provider;
+
+        // Load Values
+        document.getElementById('lm-url').value = localStorage.getItem('lm_studio_url') || "http://127.0.0.1:1234/v1";
+        document.getElementById('ollama-url').value = localStorage.getItem('ollama_url') || "http://127.0.0.1:11434/v1";
+        document.getElementById('gemini-key').value = localStorage.getItem('gemini_api_key') || "";
+        document.getElementById('global-temp').value = localStorage.getItem('global_temperature') || "0.7";
+        document.getElementById('temp-val').innerText = document.getElementById('global-temp').value;
+
+        updateUI();
+    };
+
+    function updateUI() {
+        const provider = document.getElementById('provider-select').value;
+        document.querySelectorAll('.provider-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(`${provider}-config`).classList.add('active');
+    }
+
+    function saveSettings() {
+        const provider = document.getElementById('provider-select').value;
+        localStorage.setItem('active_provider', provider);
+        
+        localStorage.setItem('lm_studio_url', document.getElementById('lm-url').value.replace(/\/+$/, ""));
+        localStorage.setItem('ollama_url', document.getElementById('ollama-url').value.replace(/\/+$/, ""));
+        localStorage.setItem('gemini_api_key', document.getElementById('gemini-key').value.trim());
+        localStorage.setItem('global_temperature', document.getElementById('global-temp').value);
+
+        alert("Settings Saved!");
+    }
+</script>
+</body>
+</html>
