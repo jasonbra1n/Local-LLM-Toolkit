@@ -14,6 +14,7 @@ We welcome contributions! This project is designed to be a modular suite of loca
 
 ### 1. Create the File
 Copy an existing tool (like `prompt_generator.html`) to use as a template. Save it as `src/your_tool_name.html`.
+Ensure it links to `<link rel="stylesheet" href="style.css">`.
 
 ### 2. Implement Features
 - **System Prompt**: Define a specific `const SYSTEM_PROMPT` at the top of your script.
@@ -25,7 +26,7 @@ Copy an existing tool (like `prompt_generator.html`) to use as a template. Save 
 - [ ] Does it have a Model Selector dropdown?
 - [ ] Is the "Thinking Process" (Chain of Thought) handled/displayed?
 - [ ] Is there a "Save to File" button (if applicable)?
-- [ ] Does it use the shared CSS variables?
+- [ ] Does it link to `style.css`?
 
 ### 4. Update the Dashboard
 Add a new card to the grid in `src/index.html`:
@@ -43,7 +44,7 @@ Check `ROADMAP.md` to see if your tool fulfills a planned feature, or add it to 
 ## 🤖 For AI Agents
 If you are an AI Agent reading this to generate code:
 1. Read `STYLE_GUIDE.md` first to understand the CSS/JS patterns.
-2. Ensure all new HTML files are self-contained (no external deps).
+2. Ensure all new HTML files link to `style.css`.
 3. Always implement error handling for the fetch API.
 
 ## 📄 License

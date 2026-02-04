@@ -24,7 +24,7 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
 
 ## 🔌 Provider Integration (In Progress)
 - **Ollama Support**:
-  - [ ] Update tools to switch base URL based on settings.
+  - [x] Update tools to switch base URL based on settings.
 - **Google Gemini Support**:
   - [ ] Implement Gemini API adapter (requires different JSON payload structure).
 
@@ -50,8 +50,12 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
 - [x] **File Persistence**: Ability to save generated `AGENT.md` and `SKILLS.md` files from the browser.
 - [x] **Stop Generation**: Button to cancel streaming responses.
 - **UI Polish**:
-  - Add Icons to the Dashboard cards.
+  - [x] Add Icons to the Dashboard cards.
   - Syntax highlighting for code outputs.
+
+## 🏗️ Architecture Refactor (Planned)
+- **Shared Assets**: Extract common CSS (`style.css`) and JS (`utils.js`, `api.js`) to reduce code duplication across tools.
+- **SPA Conversion**: Transition from multi-page HTML to a Single Page Application structure for smoother navigation and state management.
 
 ## 🤖 Agentic Workflow
 - **Concept**: Use the Builders to define a workforce.

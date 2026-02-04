@@ -1,12 +1,12 @@
 # Project Style Guide
 
 ## 🏗️ Architecture Philosophy
-- **Single-File Tools**: Each tool (e.g., `agent_builder.html`) must be self-contained in a single HTML file. No external CSS or JS files.
+- **Shared Assets**: All tools must link to `style.css` for consistent theming.
 - **Vanilla Web Technologies**: Use standard HTML5, CSS3, and ES6+ JavaScript. No frameworks (React, Vue, etc.) and no build steps.
 - **Local-First**: All API calls must point to the local LM Studio instance (`http://127.0.0.1:1234`).
 
 ## 🎨 CSS & Theming
-All tools must use the shared CSS variables to maintain a consistent "Dark Mode" aesthetic.
+All tools must link to `style.css`.
 
 ### Core Variables
 ```css

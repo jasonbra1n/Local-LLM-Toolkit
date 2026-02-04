@@ -13,7 +13,9 @@ A suite of privacy-focused, local AI tools designed to run entirely in your brow
 - **Advanced UI**:
   - Real-time streaming responses.
   - "Thinking Process" visualization for reasoning models.
-  - Global settings for API configuration.
+  - **Multi-Provider Support**: Switch between LM Studio, Ollama, and Google Gemini (WIP).
+  - **Control**: Stop generation at any time.
+  - **Persistence**: Save generated Agents and Skills directly to `.md` files.
 
 ## 🚀 Getting Started
 
