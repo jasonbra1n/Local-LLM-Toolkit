@@ -17,22 +17,32 @@ This file contains the "Magic Spells" (Prompts) to guide Gemini through the deve
 
 ### 2. Scaffold a New Tool
 > "I want to create a new tool called '[Tool Name]'. It should be a standalone HTML file in `src/`.
-> 1. Use `style.css` for theming.
-> 2. Include a System Prompt configuration constant.
-> 3. Implement the standard 'Model Selector' and 'Generate' button.
-> 4. Ensure it handles Streaming and the 'Thinking Process' UI."
+> 1. Use `style.css` for theming and `layout.js` for navigation.
+> 2. Import `utils.js` for the API router.
+> 3. Include a System Prompt configuration constant.
+> 4. Implement `loadModels(getConfig())` on load.
+> 5. Use `generateText()` for the API call."
 
 ### 3. API & Provider Integration
-> "I need to implement support for [Provider Name, e.g., Google Gemini].
-> 1. Review `settings.html` to see how we store the API key/URL.
-> 2. Create an adapter function in the tool to handle the specific JSON payload for this provider.
-> 3. Ensure the response parsing handles the specific delta format of this provider."
+> "I need to add support for [Provider Name].
+> 1. Update `settings.html` to add the configuration fields (API Key/URL).
+> 2. Update `src/utils.js`:
+>    - Add the provider to `getConfig()`.
+>    - Add the provider logic to `loadModels()` (if applicable).
+>    - Add the specific adapter function (or reuse `generateOpenAI`)."
 
 ### 4. Refactoring & Cleanup
 > "Review `src/[filename].html`.
 > 1. Check if it complies with `STYLE_GUIDE.md`.
 > 2. Ensure all CSS is using variables from `style.css`.
 > 3. Verify that error handling is present for the fetch request."
+
+### 5. Release Management
+> "I want to prepare for release [Version, e.g., v0.1.0].
+> 1. Update the version number in `src/layout.js` (APP_CONFIG).
+> 2. Update `README.md` if necessary.
+> 3. Finalize `CHANGELOG.md` by moving 'Unreleased' to the new version header.
+> 4. Generate a summary of changes for the GitHub Release description."
 
 ---
 
@@ -48,6 +58,6 @@ This file contains the "Magic Spells" (Prompts) to guide Gemini through the deve
 ## 📝 Playground Notes
 
 ### Current Focus
-- [ ] Testing Ollama integration.
-- [ ] Implementing Google Gemini API adapter.
-- [ ] Refactoring common JS logic into `utils.js`.
+- [ ] Creating 'Meeting Notes' tool.
+- [ ] Creating 'YouTube Script Writer' tool.
+- [ ] Preparing for Release v0.1.0.
