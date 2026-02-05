@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Janitor</title>
+    <title>Universal Translator</title>
     <link rel="stylesheet" href="style.css">
     <script src="utils.js"></script>
     <script src="layout.js"></script>
     <style>
         :root {
-            --accent-color: #89dceb; /* Sky blue for cleanliness */
-            --button-hover: #74c7d9;
+            --accent-color: #fab387; /* Peach for Global/Communication */
+            --button-hover: #f9e2af;
         }
-        .container { max-width: 1000px; } /* Wider for code */
+        .container { max-width: 900px; }
         textarea { font-family: 'Consolas', 'Monaco', monospace; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🧹 Code Janitor</h1>
+    <h1>🌐 Universal Translator</h1>
     <!-- Status Bar -->
     <div class="status-bar">
         <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
@@ -26,7 +26,8 @@
     </div>
 
     <div class="info-box">
-        <strong>ℹ️ Tip:</strong> Paste your messy or legacy code below. The Janitor will refactor it for readability, add comments, and fix formatting issues without changing functionality.
+        <strong>ℹ️ How this works:</strong> This tool is designed for <em>Software Localization (i18n)</em>. 
+        Paste a JSON object (key-value pairs). The AI will translate the <strong>values</strong> to the Target Language but keep the <strong>keys</strong> unchanged.
     </div>
 
     <!-- Inputs -->
@@ -36,13 +37,21 @@
     </div>
 
     <div class="input-group">
-        <label>Paste Spaghetti Code:</label>
-        <textarea id="code-input" rows="10" placeholder="// Paste your messy code here..."></textarea>
+        <label>Target Language:</label>
+        <input type="text" id="target-lang" placeholder="e.g. Spanish, French, Japanese, Klingon">
+    </div>
+
+    <div class="input-group">
+        <label>Source JSON (Key-Value Pairs):</label>
+        <textarea id="json-input" rows="8" placeholder='{
+  "welcome_msg": "Hello World",
+  "error_404": "Page not found"
+}'></textarea>
     </div>
 
     <!-- Controls -->
-    <button id="generate-btn" onclick="refactorCode()">
-        <span id="btn-text">Refactor Code</span>
+    <button id="generate-btn" onclick="translateJson()">
+        <span id="btn-text">Translate JSON</span>
         <div id="loader" class="loader"></div>
     </button>
     <button id="stop-btn" class="stop-btn" onclick="stopGeneration()">Stop Generation</button>
@@ -54,25 +63,21 @@
             <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
             <div id="thinking-content" class="thinking-box"></div>
         </div>
-        <label>Clean Code & Explanation:</label>
-        <textarea id="result-output" rows="20" readonly></textarea>
+        <label>Translated JSON:</label>
+        <textarea id="result-output" rows="12" readonly></textarea>
     </div>
 </div>
 
 <script>
     // Config & System Prompt
-    const JANITOR_PROMPT = `You are "The Code Janitor", a senior software engineer obsessed with clean code.
-    Your task is to refactor the user's code.
+    const TRANSLATOR_PROMPT = `You are a professional software localizer.
+    Your task is to translate the VALUES of a JSON object into a specific Target Language.
     
-    Guidelines:
-    1. **Analyze**: Understand what the code does.
-    2. **Refactor**: Improve variable names, add comments, fix formatting (PEP8/StandardJS), and optimize logic.
-    3. **Explain**: After the code block, briefly explain what you changed and why.
-    4. **Safety**: Do not change the core functionality, only the implementation quality.
-    
-    Output Format:
-    - Provide the refactored code in a markdown code block.
-    - Follow with a bulleted list of changes.`;
+    Rules:
+    1. Keep all KEYS exactly the same.
+    2. Translate only the VALUES.
+    3. Maintain the structure of the JSON.
+    4. Output ONLY valid JSON. No markdown formatting, no conversational filler.`;
 
     let abortController = null;
 
@@ -81,13 +86,14 @@
         await loadModels(getConfig());
     };
 
-    // Refactor Function
-    async function refactorCode() {
+    // Generate Function
+    async function translateJson() {
         const globalConfig = getConfig();
-        const input = document.getElementById('code-input').value;
+        const jsonInput = document.getElementById('json-input').value;
+        const lang = document.getElementById('target-lang').value;
         const model = document.getElementById('model-select').value;
 
-        if (!input) return alert("Please paste some code first.");
+        if (!jsonInput || !lang) return alert("Please enter JSON and a Target Language.");
 
         // UI Setup
         const btn = document.getElementById('generate-btn');
@@ -103,12 +109,13 @@
         
         abortController = new AbortController();
 
-        const messages = [{ role: "system", content: JANITOR_PROMPT }, { role: "user", content: input }];
+        const userMessage = `Target Language: ${lang}\n\nJSON:\n${jsonInput}`;
+        const messages = [{ role: "system", content: TRANSLATOR_PROMPT }, { role: "user", content: userMessage }];
         
         const config = {
             ...globalConfig,
             model: model,
-            temp: 0.2 // Lower temp for code
+            temp: 0.2
         };
 
         let isThinking = false;

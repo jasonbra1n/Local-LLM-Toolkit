@@ -10,6 +10,8 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] Connection to Local LM Studio Server (IPv4 `127.0.0.1`).
   - [x] Dynamic Model Selection dropdown.
   - [x] Global Settings page for Multi-Provider configuration.
+  - [x] **Shared Assets**: Extracted common CSS (`style.css`) and JS (`utils.js`) to reduce code duplication.
+  - [x] **Unified Layout**: Implemented `layout.js` for consistent Navigation Bar and Footer across all pages.
 - **System Prompt Generator**:
   - [x] Meta-Prompting logic to generate robust system instructions.
   - [x] Real-time Streaming support.
@@ -23,34 +25,42 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] `skill_builder.html`: Tool to generate `SKILLS.md` definitions.
   - [x] `code_janitor.html`: Tool to refactor code.
   - [x] `email_polisher.html`: Tool to draft emails with tone selection.
+  - [x] `universal_translator.html`: Tool to localize JSON files.
+  - [x] `regex_wizard.html`: Tool to generate Regular Expressions.
+  - [x] `novel_writer.html`: Tool to generate prose from outlines.
+  - [x] `chat_interface.html`: General purpose chat tool.
 
-## 🔌 Provider Integration (In Progress)
-- **Ollama Support**:
+## 🔌 Provider Integration
+- **Local Providers**:
+  - [x] **LM Studio**: Native support via OpenAI-compatible endpoint.
   - [x] Update tools to switch base URL based on settings.
-- **Google Gemini Support**:
+  - [x] **Ollama**: Supported via base URL configuration.
+- **Cloud Providers**:
   - [x] Implement Gemini API adapter (`src/utils.js`).
   - [x] Refactor tools to use `utils.js` and support Gemini switching.
 
+### ☁️ Future API Expansion (Planned)
+Prioritized list of providers to add to `src/utils.js`:
+1. **OpenAI** (GPT-4o, o1) - *Standard Adapter*
+2. **Anthropic** (Claude 3.5 Sonnet)
+3. **Groq** (High-speed inference for Llama/Mixtral)
+4. **DeepSeek** (Native API)
+5. **Mistral AI** (La Plateforme)
+6. **xAI** (Grok)
+7. **Hugging Face** (Inference API)
+8. **Cohere** (Command R+)
+9. **Perplexity** (Online LLM)
+10. **Together AI** (Serverless Open Models)
+
 ## 🛠️ Planned Tools
 
-### 1. The "Universal Translator" (JSON Localizer)
-- **Goal**: Localize app UI strings for developers.
-- **Features**: Input JSON -> Translated JSON preserving keys.
-
-### 2. The "Regex Wizard"
-- **Goal**: Generate complex Regular Expressions from plain English.
-
 ## 🔮 Future Enhancements
-- **Novel Writer**: A tool to take the "Chapter Outline" from the Story Architect and generate actual prose for specific chapters.
 - [x] **File Persistence**: Ability to save generated `AGENT.md` and `SKILLS.md` files from the browser.
 - [x] **Stop Generation**: Button to cancel streaming responses.
+- **Settings Refactor**: As we add more providers, `settings.html` will need a tabbed interface or collapsible sections to manage API keys cleanly.
 - **UI Polish**:
   - [x] Add Icons to the Dashboard cards.
   - Syntax highlighting for code outputs.
-
-## 🏗️ Architecture Refactor (Planned)
-- **Shared Assets**: Extract common CSS (`style.css`) and JS (`utils.js`, `api.js`) to reduce code duplication across tools.
-- **SPA Conversion**: Transition from multi-page HTML to a Single Page Application structure for smoother navigation and state management.
 
 ## 🤖 Agentic Workflow
 - **Concept**: Use the Builders to define a workforce.

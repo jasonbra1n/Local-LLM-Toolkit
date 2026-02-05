@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
+    <script src="layout.js"></script>
+    <style>
+        :root {
+            --accent-color: #f9e2af; /* Yellow for Ideas */
+            --button-hover: #fdf6e3;
+        }
+        .container { max-width: 900px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>💡 Idea Generator</h1>
+    <div class="status-bar">
+        <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
+        <div style="font-size: 0.8em; opacity: 0.7;">Target: 127.0.0.1:1234</div>
+    </div>
+
+    <div class="info-box">
+        <strong>ℹ️ Tip:</strong> Stuck? Use this tool to brainstorm concepts, blog topics, plot hooks, or business ideas.
+    </div>
+
+    <div class="input-group">
+        <label>Select Model:</label>
+        <select id="model-select"><option value="local-model">Loading...</option></select>
+    </div>
+
+    <div class="row input-group">
+        <div class="col">
+            <label>Category:</label>
+            <select id="category-select">
+                <option value="General Brainstorming">General Brainstorming</option>
+                <option value="Blog Post Topics">Blog Post Topics</option>
+                <option value="YouTube Video Ideas">YouTube Video Ideas</option>
+                <option value="Fiction Plot Hooks">Fiction Plot Hooks</option>
+                <option value="Business Startup Ideas">Business Startup Ideas</option>
+                <option value="Coding Projects">Coding Projects</option>
+            </select>
+        </div>
+        <div class="col">
+            <label>Quantity:</label>
+            <input type="number" id="quantity-input" value="10" min="1" max="50">
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Topic / Context / Constraints:</label>
+        <textarea id="topic-input" rows="3" placeholder="e.g. AI tools for productivity, focusing on privacy..."></textarea>
+    </div>
+
+    <button id="generate-btn" onclick="generateIdeas()">
+        <span id="btn-text">Brainstorm</span>
+        <div id="loader" class="loader"></div>
+    </button>
+    <button id="stop-btn" class="stop-btn" onclick="stopGeneration()">Stop Generation</button>
+
+    <div class="output-area" id="output-container" style="display:none;">
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <div id="thinking-container" style="display:none;">
+            <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
+            <div id="thinking-content" class="thinking-box"></div>
+        </div>
+        <label>Generated Ideas:</label>
+        <textarea id="result-output" rows="15" readonly></textarea>
+    </div>
+</div>
+
+<script>
+    const BRAINSTORM_PROMPT = `You are a creative brainstorming partner.
+    Your goal is to generate a list of unique, high-quality ideas based on the user's topic.
+    
+    Rules:
+    1. Generate the requested number of ideas.
+    2. Be specific and actionable. Avoid generic suggestions.
+    3. Format as a numbered list.
+    4. If applicable, add a brief sentence explaining *why* the idea is good.`;
+
+    let abortController = null;
+
+    window.onload = async () => {
+        await loadModels(getConfig());
+    };
+
+    async function generateIdeas() {
+        const globalConfig = getConfig();
+        const topic = document.getElementById('topic-input').value;
+        const category = document.getElementById('category-select').value;
+        const quantity = document.getElementById('quantity-input').value;
+        const model = document.getElementById('model-select').value;
+
+        if (!topic) return alert("Please enter a topic.");
+
+        const btn = document.getElementById('generate-btn');
+        const loader = document.getElementById('loader');
+        const out = document.getElementById('output-container');
+        const resArea = document.getElementById('result-output');
+        const thinkBox = document.getElementById('thinking-container');
+        const thinkContent = document.getElementById('thinking-content');
+        const stopBtn = document.getElementById('stop-btn');
+
+        btn.disabled = true; document.getElementById('btn-text').style.display = 'none'; loader.style.display = 'block'; stopBtn.style.display = 'block';
+        out.style.display = 'block'; resArea.value = ""; thinkContent.textContent = ""; thinkBox.style.display = 'none';
+
+        abortController = new AbortController();
+
+        const config = { ...globalConfig, model: model, temp: 0.9 }; // Higher temp for creativity
+        const userMessage = `Category: ${category}\nQuantity: ${quantity}\nTopic: ${topic}`;
+        const messages = [{ role: "system", content: BRAINSTORM_PROMPT }, { role: "user", content: userMessage }];
+
+        let isThinking = false;
+
+        await generateText(messages, config,
+            (content) => {
+                if (!isThinking && content.includes('<think>')) { isThinking = true; thinkBox.style.display = 'block'; }
+                else if (isThinking && content.includes('</think>')) { isThinking = false; }
+                else if (isThinking) { thinkContent.textContent += content; thinkContent.scrollTop = thinkContent.scrollHeight; }
+                else { resArea.value += content; resArea.scrollTop = resArea.scrollHeight; }
+            },
+            () => { btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; abortController = null; },
+            (err) => { if (err.name !== 'AbortError') alert(err.message); btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; },
+            abortController.signal
+        );
+    }
+
+    function stopGeneration() { if (abortController) abortController.abort(); }
+    function toggleThinking() { const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content'); h.classList.toggle('collapsed'); c.style.display = h.classList.contains('collapsed') ? 'none' : 'block'; }
+    function copyToClipboard() { const t = document.getElementById("result-output"); t.select(); navigator.clipboard.writeText(t.value); alert("Copied!"); }
+</script>
+</body>
+</html>

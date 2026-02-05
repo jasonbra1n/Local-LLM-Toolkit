@@ -26,6 +26,7 @@ All tools must link to `style.css`.
 - `.status-bar`: Top bar showing LM Studio connection status.
 - `.thinking-box`: Collapsible container for Chain-of-Thought reasoning.
 - `.loader`: CSS spinner for loading states.
+- `.info-box`: A subtle explanation box to guide the user on how to use the tool.
 
 ## 💻 JavaScript Patterns
 

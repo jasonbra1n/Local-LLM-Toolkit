@@ -1,0 +1,79 @@
+/**
+ * Layout Manager
+ * Injects the Navigation Bar and Footer into all pages to create a unified "App" feel.
+ * Also injects the necessary CSS for the layout.
+ */
+
+const APP_CONFIG = {
+    name: "Local LLM Toolkit",
+    version: "v1.1",
+    tools: [
+        { name: "Chat Interface", link: "chat_interface.html", icon: "💬" },
+        { name: "Prompt Generator", link: "prompt_generator.html", icon: "📝" },
+        { name: "Idea Generator", link: "idea_generator.html", icon: "💡" },
+        { name: "Summarizer", link: "summarizer.html", icon: "📝" },
+        { name: "Story Architect", link: "story_architect.html", icon: "📖" },
+        { name: "Novel Writer", link: "novel_writer.html", icon: "✍️" },
+        { name: "Email Polisher", link: "email_polisher.html", icon: "📧" },
+        { name: "Code Janitor", link: "code_janitor.html", icon: "🧹" },
+        { name: "Regex Wizard", link: "regex_wizard.html", icon: "🧙‍♂️" },
+        { name: "Universal Translator", link: "universal_translator.html", icon: "🌐" },
+        { name: "Agent Builder", link: "agent_builder.html", icon: "🤖" },
+        { name: "Skill Builder", link: "skill_builder.html", icon: "🛠️" }
+    ]
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 2. Build Navbar HTML
+    const navHtml = `
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="index.html">🚀 ${APP_CONFIG.name}</a>
+            </div>
+            <button class="hamburger" id="nav-toggle">☰</button>
+            <ul class="nav-links" id="nav-menu">
+                <li><a href="index.html">Dashboard</a></li>
+                <li class="dropdown" id="tools-dropdown">
+                    <a href="#" class="dropbtn" id="tools-toggle">Tools ▾</a>
+                    <div class="dropdown-content">
+                        ${APP_CONFIG.tools.map(t => `<a href="${t.link}">${t.icon} ${t.name}</a>`).join('')}
+                    </div>
+                </li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+            </ul>
+        </nav>
+    `;
+
+    // 3. Build Footer HTML
+    const footerHtml = `
+        <footer class="footer">
+            <p>${APP_CONFIG.name} ${APP_CONFIG.version} | <a href="https://github.com/yourusername/Local-LLM-Toolkit" target="_blank">GitHub</a> | <a href="../ROADMAP.md" target="_blank">Roadmap</a></p>
+            <p style="opacity: 0.5; margin-top: 5px;">Privacy Focused. Localhost Centric.</p>
+        </footer>
+    `;
+
+    // 4. Inject into DOM
+    document.body.insertAdjacentHTML('afterbegin', navHtml);
+    document.body.insertAdjacentHTML('beforeend', footerHtml);
+
+    // 5. Highlight Active Link
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    const links = document.querySelectorAll('.nav-links a, .dropdown-content a');
+    links.forEach(link => { if (link.getAttribute('href') === currentPath) link.classList.add('active'); });
+
+    // 6. Mobile Menu Toggles
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const toolsToggle = document.getElementById('tools-toggle');
+    const toolsDropdown = document.getElementById('tools-dropdown');
+
+    navToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+    
+    toolsToggle.addEventListener('click', (e) => {
+        // Only toggle on mobile where hover is disabled
+        if (window.innerWidth <= 768) {
+            e.preventDefault();
+            toolsDropdown.classList.toggle('active');
+        }
+    });
+});

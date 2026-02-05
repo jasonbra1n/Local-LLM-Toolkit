@@ -13,6 +13,14 @@ All notable changes to this project will be documented in this file.
 - **Settings**: Global configuration page for Multi-Provider support (LM Studio, Ollama, Gemini) and global temperature.
 - **Shared Assets**: Created `style.css` to centralize theming across all tools.
 - **Google Gemini Support**: Full integration with Google's Gemini API (Flash/Pro) via `utils.js` adapter.
+- **Code Janitor**: Tool to refactor spaghetti code into clean, readable code.
+- **Email Polisher**: Tool to draft professional emails with tone selection.
+- **Universal Translator**: Tool to localize JSON files while preserving keys.
+- **Regex Wizard**: Tool to generate complex Regular Expressions from plain English.
+- **Chat Interface**: General purpose chat with history and streaming.
+- **Novel Writer**: Tool to generate prose from outlines.
+- **Summarizer**: Tool to condense text into bullets or summaries.
+- **Cloud Provider Expansion**: Added support for OpenAI, Groq, DeepSeek, and Mistral AI in Settings.
 
 ### Features
 - **Streaming**: Real-time text generation support for all tools.
@@ -29,6 +37,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Refactored all tools to use centralized configuration from `settings.html`.
+- **Architecture**: Implemented centralized `generateText()` router in `utils.js` to handle all API calls.
+- **Refactor**: Updated all 11 tools to use the centralized router, removing duplicate API logic.
+- **Navigation**: Reordered tools in Dashboard and Navbar into logical groups (General, Creative, Utility, Agentic).
 - Refactored all tools to use `utils.js` for shared logic and provider switching.
 - Refactored all HTML tools to use the shared `style.css` file, removing redundant code.
 - Added visual icons to the Dashboard cards for better UX.

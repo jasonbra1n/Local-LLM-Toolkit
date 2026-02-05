@@ -1,19 +1,26 @@
 # Local LLM Toolkit
 
-A suite of privacy-focused, local AI tools designed to run entirely in your browser using [LM Studio](https://lmstudio.ai/).
+A suite of privacy-focused, local-first AI tools designed to run entirely in your browser. While optimized for local inference (via [LM Studio](https://lmstudio.ai/) or [Ollama](https://ollama.com/)), it also supports cloud providers like Google Gemini for a hybrid workflow.
 
 ## 🌟 Features
 
-- **Local & Private**: No data leaves your machine. Connects directly to `localhost`. API Keys (if used for external providers) are stored in your browser's **Local Storage**, not cookies, and are never sent to a backend server.
+- **Local & Private**: By default, no data leaves your machine. Connects directly to `localhost`.
+- **Cloud Options**: Optional support for Google Gemini (API keys stored in browser Local Storage).
 - **Modular Tools**:
+  - **Chat Interface**: General-purpose chat with history and streaming.
   - **Prompt Generator**: Create robust system prompts using meta-prompting.
   - **Story Architect**: Generate comprehensive story bibles and outlines.
+  - **Novel Writer**: Draft prose based on structured outlines.
   - **Agent Builder**: Define AI personas and export to `AGENT.md`.
   - **Skill Builder**: Define reusable capabilities and export to `SKILLS.md`.
+  - **Code Janitor**: Refactor and clean up code.
+  - **Email Polisher**: Draft professional emails with tone control.
+  - **Regex Wizard**: Generate complex regex patterns from plain English.
+  - **Universal Translator**: Localize JSON files while preserving keys.
 - **Advanced UI**:
   - Real-time streaming responses.
   - "Thinking Process" visualization for reasoning models.
-  - **Multi-Provider Support**: Switch between LM Studio, Ollama, and Google Gemini (WIP).
+  - **Multi-Provider Support**: Switch between LM Studio, Ollama, and Google Gemini.
   - **Control**: Stop generation at any time.
   - **Persistence**: Save generated Agents and Skills directly to `.md` files.
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings</title>
     <link rel="stylesheet" href="style.css">
+    <script src="layout.js"></script>
     <style>
         .container {
             max-width: 600px;
@@ -17,14 +18,21 @@
 </head>
 <body>
 <div class="container">
-    <a href="index.html" class="back-link">← Back to Dashboard</a>
     <h1>Settings</h1>
     
     <label>Active AI Provider:</label>
     <select id="provider-select" onchange="updateUI()">
-        <option value="lm-studio">LM Studio (Local)</option>
-        <option value="ollama">Ollama (Local)</option>
-        <option value="gemini">Google Gemini (Cloud)</option>
+        <optgroup label="Local (Privacy Focused)">
+            <option value="lm-studio">LM Studio</option>
+            <option value="ollama">Ollama</option>
+        </optgroup>
+        <optgroup label="Cloud (Requires API Key)">
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">OpenAI</option>
+            <option value="groq">Groq</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="mistral">Mistral AI</option>
+        </optgroup>
     </select>
 
     <!-- LM Studio Config -->
@@ -32,6 +40,12 @@
         <label>Base URL:</label>
         <input type="text" id="lm-url" placeholder="http://127.0.0.1:1234/v1">
         <span class="note">Default: http://127.0.0.1:1234/v1</span>
+        <label style="margin-top: 10px; display: block;">Default Model ID (Optional):</label>
+        <div style="display: flex; gap: 10px;">
+            <select id="lm-model" style="flex: 1;"><option value="">Loading...</option></select>
+            <button onclick="fetchLocalModels()" style="width: auto; padding: 10px;">🔄 Refresh</button>
+        </div>
+        <span class="note">If set, tools will auto-select this model. Click Refresh to list available models.</span>
     </div>
 
     <!-- Ollama Config -->
@@ -49,6 +63,46 @@
         <label style="margin-top: 10px; display: block;">Model ID:</label>
         <input type="text" id="gemini-model" placeholder="gemini-1.5-flash">
         <span class="note">Default: gemini-1.5-flash</span>
+    </div>
+
+    <!-- OpenAI Config -->
+    <div id="openai-config" class="provider-section">
+        <label>API Key:</label>
+        <input type="password" id="openai-key" placeholder="sk-...">
+        <label style="margin-top: 10px; display: block;">Model ID:</label>
+        <input type="text" id="openai-model" placeholder="gpt-4o">
+        <span class="note">Default: gpt-4o</span>
+        <input type="hidden" id="openai-url" value="https://api.openai.com/v1">
+    </div>
+
+    <!-- Groq Config -->
+    <div id="groq-config" class="provider-section">
+        <label>API Key:</label>
+        <input type="password" id="groq-key" placeholder="gsk_...">
+        <label style="margin-top: 10px; display: block;">Model ID:</label>
+        <input type="text" id="groq-model" placeholder="llama3-8b-8192">
+        <span class="note">Default: llama3-8b-8192</span>
+        <input type="hidden" id="groq-url" value="https://api.groq.com/openai/v1">
+    </div>
+
+    <!-- DeepSeek Config -->
+    <div id="deepseek-config" class="provider-section">
+        <label>API Key:</label>
+        <input type="password" id="deepseek-key" placeholder="sk-...">
+        <label style="margin-top: 10px; display: block;">Model ID:</label>
+        <input type="text" id="deepseek-model" placeholder="deepseek-chat">
+        <span class="note">Default: deepseek-chat</span>
+        <input type="hidden" id="deepseek-url" value="https://api.deepseek.com">
+    </div>
+
+    <!-- Mistral Config -->
+    <div id="mistral-config" class="provider-section">
+        <label>API Key:</label>
+        <input type="password" id="mistral-key" placeholder="key...">
+        <label style="margin-top: 10px; display: block;">Model ID:</label>
+        <input type="text" id="mistral-model" placeholder="mistral-small-latest">
+        <span class="note">Default: mistral-small-latest</span>
+        <input type="hidden" id="mistral-url" value="https://api.mistral.ai/v1">
     </div>
 
     <h3>Global Defaults</h3>
@@ -69,9 +123,24 @@
         document.getElementById('gemini-key').value = localStorage.getItem('gemini_api_key') || "";
         document.getElementById('gemini-model').value = localStorage.getItem('gemini_model') || "gemini-1.5-flash";
         document.getElementById('global-temp').value = localStorage.getItem('global_temperature') || "0.7";
+        
+        // Cloud Providers
+        document.getElementById('openai-key').value = localStorage.getItem('openai_api_key') || "";
+        document.getElementById('openai-model').value = localStorage.getItem('openai_model') || "gpt-4o";
+        
+        document.getElementById('groq-key').value = localStorage.getItem('groq_api_key') || "";
+        document.getElementById('groq-model').value = localStorage.getItem('groq_model') || "llama3-8b-8192";
+        
+        document.getElementById('deepseek-key').value = localStorage.getItem('deepseek_api_key') || "";
+        document.getElementById('deepseek-model').value = localStorage.getItem('deepseek_model') || "deepseek-chat";
+        
+        document.getElementById('mistral-key').value = localStorage.getItem('mistral_api_key') || "";
+        document.getElementById('mistral-model').value = localStorage.getItem('mistral_model') || "mistral-small-latest";
+
         document.getElementById('temp-val').innerText = document.getElementById('global-temp').value;
 
         updateUI();
+        fetchLocalModels(); // Auto-fetch on load
     };
 
     function updateUI() {
@@ -80,15 +149,72 @@
         document.getElementById(`${provider}-config`).classList.add('active');
     }
 
+    async function fetchLocalModels() {
+        const url = document.getElementById('lm-url').value.replace(/\/+$/, "");
+        const select = document.getElementById('lm-model');
+        const savedModel = localStorage.getItem('lm_studio_model') || "";
+        
+        select.innerHTML = '<option value="">Checking connection...</option>';
+        
+        try {
+            const response = await fetch(`${url}/models`);
+            if (response.ok) {
+                const data = await response.json();
+                select.innerHTML = '<option value="">-- Select Default Model --</option>';
+                
+                if (data.data && data.data.length > 0) {
+                    data.data.forEach(m => {
+                        const option = document.createElement('option');
+                        option.value = m.id;
+                        option.text = m.id;
+                        if (m.id === savedModel) option.selected = true;
+                        select.appendChild(option);
+                    });
+                }
+                
+                // If saved model exists but isn't in the list (e.g. different server state), add it
+                if (savedModel && !Array.from(select.options).some(o => o.value === savedModel)) {
+                    const option = document.createElement('option');
+                    option.value = savedModel;
+                    option.text = `${savedModel} (Saved)`;
+                    option.selected = true;
+                    select.appendChild(option);
+                }
+            } else {
+                select.innerHTML = `<option value="${savedModel}">${savedModel || "Connection Error"}</option>`;
+            }
+        } catch (e) {
+            select.innerHTML = `<option value="${savedModel}">${savedModel || "Offline / CORS Error"}</option>`;
+        }
+    }
+
     function saveSettings() {
         const provider = document.getElementById('provider-select').value;
         localStorage.setItem('active_provider', provider);
         
         localStorage.setItem('lm_studio_url', document.getElementById('lm-url').value.replace(/\/+$/, ""));
+        localStorage.setItem('lm_studio_model', document.getElementById('lm-model').value.trim());
         localStorage.setItem('ollama_url', document.getElementById('ollama-url').value.replace(/\/+$/, ""));
         localStorage.setItem('gemini_api_key', document.getElementById('gemini-key').value.trim());
         localStorage.setItem('gemini_model', document.getElementById('gemini-model').value.trim() || "gemini-1.5-flash");
         localStorage.setItem('global_temperature', document.getElementById('global-temp').value);
+
+        // Save Cloud Providers
+        localStorage.setItem('openai_api_key', document.getElementById('openai-key').value.trim());
+        localStorage.setItem('openai_model', document.getElementById('openai-model').value.trim() || "gpt-4o");
+        localStorage.setItem('openai_url', document.getElementById('openai-url').value);
+
+        localStorage.setItem('groq_api_key', document.getElementById('groq-key').value.trim());
+        localStorage.setItem('groq_model', document.getElementById('groq-model').value.trim() || "llama3-8b-8192");
+        localStorage.setItem('groq_url', document.getElementById('groq-url').value);
+
+        localStorage.setItem('deepseek_api_key', document.getElementById('deepseek-key').value.trim());
+        localStorage.setItem('deepseek_model', document.getElementById('deepseek-model').value.trim() || "deepseek-chat");
+        localStorage.setItem('deepseek_url', document.getElementById('deepseek-url').value);
+
+        localStorage.setItem('mistral_api_key', document.getElementById('mistral-key').value.trim());
+        localStorage.setItem('mistral_model', document.getElementById('mistral-model').value.trim() || "mistral-small-latest");
+        localStorage.setItem('mistral_url', document.getElementById('mistral-url').value);
 
         alert("Settings Saved!");
     }

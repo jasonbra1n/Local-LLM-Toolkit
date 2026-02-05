@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Janitor</title>
+    <title>Novel Writer</title>
     <link rel="stylesheet" href="style.css">
     <script src="utils.js"></script>
     <script src="layout.js"></script>
     <style>
         :root {
-            --accent-color: #89dceb; /* Sky blue for cleanliness */
-            --button-hover: #74c7d9;
+            --accent-color: #f5c2e7; /* Pink for Creativity/Prose */
+            --button-hover: #eba0ac;
         }
-        .container { max-width: 1000px; } /* Wider for code */
-        textarea { font-family: 'Consolas', 'Monaco', monospace; font-size: 0.9rem; }
+        .container { max-width: 1000px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🧹 Code Janitor</h1>
+    <h1>✍️ Novel Writer</h1>
     <!-- Status Bar -->
     <div class="status-bar">
         <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
@@ -26,7 +25,7 @@
     </div>
 
     <div class="info-box">
-        <strong>ℹ️ Tip:</strong> Paste your messy or legacy code below. The Janitor will refactor it for readability, add comments, and fix formatting issues without changing functionality.
+        <strong>ℹ️ Workflow:</strong> Paste your <strong>Story Bible / Chapter Outline</strong> (from the Story Architect) into the Context box. Then, specify which chapter you want to write today.
     </div>
 
     <!-- Inputs -->
@@ -36,43 +35,52 @@
     </div>
 
     <div class="input-group">
-        <label>Paste Spaghetti Code:</label>
-        <textarea id="code-input" rows="10" placeholder="// Paste your messy code here..."></textarea>
+        <label>Story Context (Paste your Outline/Bible here):</label>
+        <textarea id="context-input" rows="6" placeholder="Paste the output from Story Architect here..."></textarea>
+    </div>
+
+    <div class="row input-group">
+        <div class="col">
+            <label>Chapter / Scene to Write:</label>
+            <input type="text" id="chapter-focus" placeholder="e.g. Chapter 1: The Discovery">
+        </div>
+        <div class="col">
+            <label>Writing Style:</label>
+            <input type="text" id="style-input" placeholder="e.g. Fast-paced, Atmospheric, First-person">
+        </div>
     </div>
 
     <!-- Controls -->
-    <button id="generate-btn" onclick="refactorCode()">
-        <span id="btn-text">Refactor Code</span>
+    <button id="generate-btn" onclick="writeChapter()">
+        <span id="btn-text">Write Chapter</span>
         <div id="loader" class="loader"></div>
     </button>
     <button id="stop-btn" class="stop-btn" onclick="stopGeneration()">Stop Generation</button>
 
     <!-- Output -->
     <div class="output-area" id="output-container" style="display:none;">
+        <button class="save-btn" onclick="saveToFile()">Save Chapter</button>
         <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
         <div id="thinking-container" style="display:none;">
             <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
             <div id="thinking-content" class="thinking-box"></div>
         </div>
-        <label>Clean Code & Explanation:</label>
-        <textarea id="result-output" rows="20" readonly></textarea>
+        <label>Draft Prose:</label>
+        <textarea id="result-output" rows="25"></textarea>
     </div>
 </div>
 
 <script>
     // Config & System Prompt
-    const JANITOR_PROMPT = `You are "The Code Janitor", a senior software engineer obsessed with clean code.
-    Your task is to refactor the user's code.
+    const WRITER_PROMPT = `You are a best-selling Novelist.
+    Your task is to write the prose for a specific chapter based on the provided Story Bible/Outline.
     
     Guidelines:
-    1. **Analyze**: Understand what the code does.
-    2. **Refactor**: Improve variable names, add comments, fix formatting (PEP8/StandardJS), and optimize logic.
-    3. **Explain**: After the code block, briefly explain what you changed and why.
-    4. **Safety**: Do not change the core functionality, only the implementation quality.
-    
-    Output Format:
-    - Provide the refactored code in a markdown code block.
-    - Follow with a bulleted list of changes.`;
+    1. **Show, Don't Tell**: Use sensory details and strong imagery.
+    2. **Dialogue**: Write natural, character-driven dialogue.
+    3. **Pacing**: Adhere to the requested writing style.
+    4. **Context**: Ensure consistency with the provided character profiles and plot outline.
+    5. **Output**: Write ONLY the story prose. Do not include meta-commentary.`;
 
     let abortController = null;
 
@@ -81,13 +89,15 @@
         await loadModels(getConfig());
     };
 
-    // Refactor Function
-    async function refactorCode() {
+    // Generate Function
+    async function writeChapter() {
         const globalConfig = getConfig();
-        const input = document.getElementById('code-input').value;
+        const context = document.getElementById('context-input').value;
+        const chapter = document.getElementById('chapter-focus').value;
+        const style = document.getElementById('style-input').value;
         const model = document.getElementById('model-select').value;
 
-        if (!input) return alert("Please paste some code first.");
+        if (!context || !chapter) return alert("Please provide the Story Context and Chapter focus.");
 
         // UI Setup
         const btn = document.getElementById('generate-btn');
@@ -103,12 +113,12 @@
         
         abortController = new AbortController();
 
-        const messages = [{ role: "system", content: JANITOR_PROMPT }, { role: "user", content: input }];
+        const userMessage = `Story Context:\n${context}\n\nTask: Write ${chapter}\nStyle: ${style || "Standard"}`;
+        const messages = [{ role: "system", content: WRITER_PROMPT }, { role: "user", content: userMessage }];
         
         const config = {
             ...globalConfig,
-            model: model,
-            temp: 0.2 // Lower temp for code
+            model: model
         };
 
         let isThinking = false;
@@ -139,6 +149,18 @@
     function copyToClipboard() {
         const copyText = document.getElementById("result-output");
         copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied!");
+    }
+    function saveToFile() {
+        const content = document.getElementById('result-output').value;
+        if (!content) return alert("Nothing to save!");
+        const chapter = document.getElementById('chapter-focus').value.replace(/[^a-zA-Z0-9]/g, '_') || "Chapter";
+        const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${chapter}.md`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 </script>
 </body>

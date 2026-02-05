@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summarizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
+    <script src="layout.js"></script>
+    <style>
+        :root {
+            --accent-color: #fab387; /* Peach */
+            --button-hover: #f9e2af;
+        }
+        .container { max-width: 900px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📝 Text Summarizer</h1>
+    <div class="status-bar">
+        <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
+        <div style="font-size: 0.8em; opacity: 0.7;">Target: 127.0.0.1:1234</div>
+    </div>
+
+    <div class="info-box">
+        <strong>ℹ️ Tip:</strong> Paste a long article, report, or transcript below. The AI will condense it into key bullet points or a concise executive summary.
+    </div>
+
+    <div class="input-group">
+        <label>Select Model:</label>
+        <select id="model-select"><option value="local-model">Loading...</option></select>
+    </div>
+
+    <div class="input-group">
+        <label>Summary Format:</label>
+        <select id="format-select">
+            <option value="Bullet Points">Bullet Points</option>
+            <option value="Executive Summary">Executive Summary (Paragraph)</option>
+            <option value="ELI5">Explain Like I'm 5</option>
+            <option value="Action Items">Action Items Only</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>Text to Summarize:</label>
+        <textarea id="text-input" rows="10" placeholder="Paste text here..."></textarea>
+    </div>
+
+    <button id="generate-btn" onclick="generateSummary()">
+        <span id="btn-text">Summarize</span>
+        <div id="loader" class="loader"></div>
+    </button>
+    <button id="stop-btn" class="stop-btn" onclick="stopGeneration()">Stop Generation</button>
+
+    <div class="output-area" id="output-container" style="display:none;">
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <label>Summary:</label>
+        <textarea id="result-output" rows="12" readonly></textarea>
+    </div>
+</div>
+
+<script>
+    const SUMMARIZER_PROMPT = `You are an expert Summarizer.
+    Your task is to condense the user's text into the requested format.
+    
+    Rules:
+    1. Capture the most important information.
+    2. Ignore irrelevant details.
+    3. Strictly follow the requested format (Bullets, Paragraph, etc.).
+    4. Do not add conversational filler.`;
+
+    let abortController = null;
+
+    window.onload = async () => {
+        await loadModels(getConfig());
+    };
+
+    async function generateSummary() {
+        const globalConfig = getConfig();
+        const text = document.getElementById('text-input').value;
+        const format = document.getElementById('format-select').value;
+        const model = document.getElementById('model-select').value;
+
+        if (!text) return alert("Please enter text to summarize.");
+
+        const btn = document.getElementById('generate-btn');
+        const loader = document.getElementById('loader');
+        const out = document.getElementById('output-container');
+        const resArea = document.getElementById('result-output');
+        const stopBtn = document.getElementById('stop-btn');
+
+        // UI Setup
+        btn.disabled = true; document.getElementById('btn-text').style.display = 'none'; loader.style.display = 'block'; stopBtn.style.display = 'block';
+        out.style.display = 'none'; resArea.value = "";
+
+        abortController = new AbortController();
+
+        const config = {
+            ...globalConfig,
+            model: model
+        };
+        const messages = [{ role: "system", content: SUMMARIZER_PROMPT }, { role: "user", content: `Format: ${format}\n\nText:\n${text}` }];
+
+        await generateText(messages, config,
+            (chunk) => { out.style.display = 'block'; resArea.value += chunk; resArea.scrollTop = resArea.scrollHeight; },
+            () => { 
+                btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; abortController = null; 
+            },
+            (err) => { 
+                if (err.name !== 'AbortError') alert(err.message);
+                btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; 
+            },
+            abortController.signal
+        );
+    }
+
+    function stopGeneration() { if (abortController) abortController.abort(); }
+    function copyToClipboard() {
+        const copyText = document.getElementById("result-output");
+        copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied!");
+    }
+</script>
+</body>
+</html>

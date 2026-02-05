@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Janitor</title>
+    <title>Regex Wizard</title>
     <link rel="stylesheet" href="style.css">
     <script src="utils.js"></script>
     <script src="layout.js"></script>
     <style>
         :root {
-            --accent-color: #89dceb; /* Sky blue for cleanliness */
-            --button-hover: #74c7d9;
+            --accent-color: #94e2d5; /* Teal for Regex */
+            --button-hover: #89dceb;
         }
-        .container { max-width: 1000px; } /* Wider for code */
+        .container { max-width: 900px; }
         textarea { font-family: 'Consolas', 'Monaco', monospace; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🧹 Code Janitor</h1>
+    <h1>🧙‍♂️ Regex Wizard</h1>
     <!-- Status Bar -->
     <div class="status-bar">
         <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
@@ -26,7 +26,7 @@
     </div>
 
     <div class="info-box">
-        <strong>ℹ️ Tip:</strong> Paste your messy or legacy code below. The Janitor will refactor it for readability, add comments, and fix formatting issues without changing functionality.
+        <strong>ℹ️ Tip:</strong> Describe the pattern you need in plain English (e.g., "Match dates in YYYY-MM-DD format"). The Wizard will generate the Regular Expression and explain it.
     </div>
 
     <!-- Inputs -->
@@ -36,13 +36,18 @@
     </div>
 
     <div class="input-group">
-        <label>Paste Spaghetti Code:</label>
-        <textarea id="code-input" rows="10" placeholder="// Paste your messy code here..."></textarea>
+        <label>Describe what you want to match:</label>
+        <textarea id="desc-input" rows="3" placeholder="e.g. I need to match all email addresses that end with .edu or .gov"></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Test String (Optional context):</label>
+        <textarea id="test-input" rows="2" placeholder="e.g. contact@university.edu, admin@agency.gov"></textarea>
     </div>
 
     <!-- Controls -->
-    <button id="generate-btn" onclick="refactorCode()">
-        <span id="btn-text">Refactor Code</span>
+    <button id="generate-btn" onclick="generateRegex()">
+        <span id="btn-text">Cast Regex Spell</span>
         <div id="loader" class="loader"></div>
     </button>
     <button id="stop-btn" class="stop-btn" onclick="stopGeneration()">Stop Generation</button>
@@ -54,25 +59,21 @@
             <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
             <div id="thinking-content" class="thinking-box"></div>
         </div>
-        <label>Clean Code & Explanation:</label>
-        <textarea id="result-output" rows="20" readonly></textarea>
+        <label>Regex Pattern & Explanation:</label>
+        <textarea id="result-output" rows="15" readonly></textarea>
     </div>
 </div>
 
 <script>
     // Config & System Prompt
-    const JANITOR_PROMPT = `You are "The Code Janitor", a senior software engineer obsessed with clean code.
-    Your task is to refactor the user's code.
+    const REGEX_PROMPT = `You are a Regular Expression (Regex) Wizard.
+    Your task is to generate a Regex pattern based on the user's description.
     
-    Guidelines:
-    1. **Analyze**: Understand what the code does.
-    2. **Refactor**: Improve variable names, add comments, fix formatting (PEP8/StandardJS), and optimize logic.
-    3. **Explain**: After the code block, briefly explain what you changed and why.
-    4. **Safety**: Do not change the core functionality, only the implementation quality.
-    
-    Output Format:
-    - Provide the refactored code in a markdown code block.
-    - Follow with a bulleted list of changes.`;
+    Rules:
+    1. Provide the Regex pattern clearly, preferably in a markdown code block.
+    2. Explain the components of the pattern step-by-step.
+    3. If a test string is provided, explain how it matches (or why it doesn't).
+    4. Focus on standard JavaScript/PCRE compatible regex unless specified otherwise.`;
 
     let abortController = null;
 
@@ -81,13 +82,14 @@
         await loadModels(getConfig());
     };
 
-    // Refactor Function
-    async function refactorCode() {
+    // Generate Function
+    async function generateRegex() {
         const globalConfig = getConfig();
-        const input = document.getElementById('code-input').value;
+        const desc = document.getElementById('desc-input').value;
+        const testStr = document.getElementById('test-input').value;
         const model = document.getElementById('model-select').value;
 
-        if (!input) return alert("Please paste some code first.");
+        if (!desc) return alert("Please describe what you want to match.");
 
         // UI Setup
         const btn = document.getElementById('generate-btn');
@@ -103,12 +105,12 @@
         
         abortController = new AbortController();
 
-        const messages = [{ role: "system", content: JANITOR_PROMPT }, { role: "user", content: input }];
+        const userMessage = `Description: ${desc}\nTest String: ${testStr || "None provided"}`;
+        const messages = [{ role: "system", content: REGEX_PROMPT }, { role: "user", content: userMessage }];
         
         const config = {
             ...globalConfig,
-            model: model,
-            temp: 0.2 // Lower temp for code
+            model: model
         };
 
         let isThinking = false;
