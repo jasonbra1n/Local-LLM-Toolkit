@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. Build Footer HTML
     const footerHtml = `
         <footer class="footer">
-            <p>${APP_CONFIG.name} ${APP_CONFIG.version} | <a href="https://github.com/yourusername/Local-LLM-Toolkit" target="_blank">GitHub</a> | <a href="../ROADMAP.md" target="_blank">Roadmap</a></p>
+            <p>${APP_CONFIG.name} ${APP_CONFIG.version} | <a href="https://github.com/jasonbra1n/Local-LLM-Toolkit" target="_blank">GitHub</a> | <a href="../ROADMAP.md" target="_blank">Roadmap</a></p>
             <p style="opacity: 0.5; margin-top: 5px;">Privacy Focused. Localhost Centric.</p>
         </footer>
     `;
