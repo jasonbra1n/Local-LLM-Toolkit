@@ -55,6 +55,10 @@
 
     <div class="output-area" id="output-container" style="display:none;">
         <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <div id="thinking-container" style="display:none;">
+            <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
+            <div id="thinking-content" class="thinking-box"></div>
+        </div>
         <label>Summary:</label>
         <textarea id="result-output" rows="12" readonly></textarea>
     </div>
@@ -89,10 +93,12 @@
         const out = document.getElementById('output-container');
         const resArea = document.getElementById('result-output');
         const stopBtn = document.getElementById('stop-btn');
+        const thinkBox = document.getElementById('thinking-container');
+        const thinkContent = document.getElementById('thinking-content');
 
         // UI Setup
         btn.disabled = true; document.getElementById('btn-text').style.display = 'none'; loader.style.display = 'block'; stopBtn.style.display = 'block';
-        out.style.display = 'none'; resArea.value = "";
+        out.style.display = 'none'; resArea.value = ""; thinkContent.textContent = ""; thinkBox.style.display = 'none';
 
         abortController = new AbortController();
 
@@ -102,8 +108,22 @@
         };
         const messages = [{ role: "system", content: SUMMARIZER_PROMPT }, { role: "user", content: `Format: ${format}\n\nText:\n${text}` }];
 
+        let isThinking = false;
+
         await generateText(messages, config,
-            (chunk) => { out.style.display = 'block'; resArea.value += chunk; resArea.scrollTop = resArea.scrollHeight; },
+            (content) => {
+                out.style.display = 'block';
+                if (!isThinking && content.includes('<think>')) {
+                    isThinking = true; thinkBox.style.display = 'block';
+                    const parts = content.split('<think>');
+                    if(parts[0]) resArea.value += parts[0]; if(parts[1]) thinkContent.textContent += parts[1];
+                } else if (isThinking && content.includes('</think>')) {
+                    isThinking = false;
+                    const parts = content.split('</think>');
+                    if(parts[0]) thinkContent.textContent += parts[0]; if(parts[1]) resArea.value += parts[1];
+                } else if (isThinking) { thinkContent.textContent += content; thinkContent.scrollTop = thinkContent.scrollHeight;
+                } else { resArea.value += content; resArea.scrollTop = resArea.scrollHeight; }
+            },
             () => { 
                 btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; abortController = null; 
             },
@@ -116,6 +136,10 @@
     }
 
     function stopGeneration() { if (abortController) abortController.abort(); }
+    function toggleThinking() {
+        const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content');
+        h.classList.toggle('collapsed'); c.style.display = h.classList.contains('collapsed') ? 'none' : 'block';
+    }
     function copyToClipboard() {
         const copyText = document.getElementById("result-output");
         copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied!");

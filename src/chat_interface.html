@@ -164,13 +164,25 @@
 
         await generateText(chatMessages, config,
             (content) => {
-                if (!isThinking && content.includes('<think>')) { isThinking = true; thinkBox.style.display = 'block'; }
-                else if (isThinking && content.includes('</think>')) { isThinking = false; }
-                else if (isThinking) { thinkContent.textContent += content; thinkContent.scrollTop = thinkContent.scrollHeight; }
-                else { 
-                    fullResponse += content; 
-                    assistantBubble.textContent += content; 
-                    document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight; 
+                if (!isThinking && content.includes('<think>')) {
+                    isThinking = true;
+                    thinkBox.style.display = 'block';
+                    const parts = content.split('<think>');
+                    if (parts[0]) { fullResponse += parts[0]; assistantBubble.textContent += parts[0]; }
+                    if (parts[1]) thinkContent.textContent += parts[1];
+                } else if (isThinking && content.includes('</think>')) {
+                    isThinking = false;
+                    const parts = content.split('</think>');
+                    if (parts[0]) thinkContent.textContent += parts[0];
+                    if (parts[1]) { fullResponse += parts[1]; assistantBubble.textContent += parts[1]; }
+                } else if (isThinking) {
+                    thinkContent.textContent += content;
+                    thinkContent.scrollTop = thinkContent.scrollHeight;
+                } else {
+                    fullResponse += content;
+                    assistantBubble.textContent += content;
+                    const history = document.getElementById('chat-history');
+                    history.scrollTop = history.scrollHeight;
                 }
             },
             () => { // onComplete

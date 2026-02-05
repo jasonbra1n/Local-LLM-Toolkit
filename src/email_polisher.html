@@ -123,10 +123,16 @@
 
         await generateText(messages, config,
             (content) => {
-                if (!isThinking && content.includes('<think>')) { isThinking = true; thinkBox.style.display = 'block'; }
-                else if (isThinking && content.includes('</think>')) { isThinking = false; }
-                else if (isThinking) { thinkContent.textContent += content; thinkContent.scrollTop = thinkContent.scrollHeight; }
-                else { resArea.value += content; resArea.scrollTop = resArea.scrollHeight; }
+                if (!isThinking && content.includes('<think>')) {
+                    isThinking = true; thinkBox.style.display = 'block';
+                    const parts = content.split('<think>');
+                    if(parts[0]) resArea.value += parts[0]; if(parts[1]) thinkContent.textContent += parts[1];
+                } else if (isThinking && content.includes('</think>')) {
+                    isThinking = false;
+                    const parts = content.split('</think>');
+                    if(parts[0]) thinkContent.textContent += parts[0]; if(parts[1]) resArea.value += parts[1];
+                } else if (isThinking) { thinkContent.textContent += content; thinkContent.scrollTop = thinkContent.scrollHeight;
+                } else { resArea.value += content; resArea.scrollTop = resArea.scrollHeight; }
             },
             () => { // onComplete
                 btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; abortController = null;

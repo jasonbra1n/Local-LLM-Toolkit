@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **Idea Generator**: Tool to brainstorm concepts, topics, and ideas.
+- **Settings**: Added ability to select and save a default local model ID.
+
+### Changed
+- **Refactor**: Centralized model loading and connection logic into `loadModels()` within `utils.js`.
+- **Settings**: Replaced manual model ID input with a dynamic dropdown that fetches from LM Studio.
+
+### Fixed
+- **Reasoning UI**: Improved parsing logic for `<think>` tags to prevent text loss when tags are split across streaming chunks.
+
 ## [v0.1.0] - 2026-02-04
 
 ### Added

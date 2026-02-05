@@ -107,9 +107,32 @@
             { role: "user", content: `Create a system prompt for this request: "${input}"` }
         ];
 
+        let isThinking = false;
+
         // Centralized Call
         await generateText(messages, config,
-            (chunk) => { outputContainer.style.display = 'block'; resultArea.value += chunk; resultArea.scrollTop = resultArea.scrollHeight; },
+            (chunk) => { 
+                outputContainer.style.display = 'block';
+                
+                if (!isThinking && chunk.includes('<think>')) {
+                    isThinking = true;
+                    thinkingContainer.style.display = 'block';
+                    const parts = chunk.split('<think>');
+                    if (parts[0]) resultArea.value += parts[0];
+                    if (parts[1]) thinkingContent.textContent += parts[1];
+                } else if (isThinking && chunk.includes('</think>')) {
+                    isThinking = false;
+                    const parts = chunk.split('</think>');
+                    if (parts[0]) thinkingContent.textContent += parts[0];
+                    if (parts[1]) resultArea.value += parts[1];
+                } else if (isThinking) {
+                    thinkingContent.textContent += chunk;
+                    thinkingContent.scrollTop = thinkingContent.scrollHeight;
+                } else {
+                    resultArea.value += chunk;
+                    resultArea.scrollTop = resultArea.scrollHeight;
+                }
+            },
             () => { 
             btn.disabled = false;
             btnText.style.display = 'inline';
