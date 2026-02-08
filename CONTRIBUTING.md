@@ -25,6 +25,7 @@ Ensure it links to `<link rel="stylesheet" href="style.css">`.
 - [ ] Does it connect to `127.0.0.1:1234`?
 - [ ] Does it have a Model Selector dropdown?
 - [ ] Is the "Thinking Process" (Chain of Thought) handled/displayed?
+- [ ] Is there a "Listen" button (for text-heavy outputs)?
 - [ ] Is there a "Save to File" button (if applicable)?
 - [ ] Does it link to `style.css`?
 

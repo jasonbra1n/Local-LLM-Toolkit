@@ -114,7 +114,7 @@ button:disabled {
     padding-top: 20px;
 }
 
-.copy-btn, .save-btn {
+.copy-btn, .save-btn, .speak-btn {
     background-color: #45475a;
     color: white;
     width: auto;
@@ -127,7 +127,7 @@ button:disabled {
     border-radius: 4px;
 }
 
-.copy-btn:hover, .save-btn:hover {
+.copy-btn:hover, .save-btn:hover, .speak-btn:hover {
     background-color: #585b70;
 }
 

@@ -27,6 +27,7 @@ All tools must link to `style.css`.
 - `.thinking-box`: Collapsible container for Chain-of-Thought reasoning.
 - `.loader`: CSS spinner for loading states.
 - `.info-box`: A subtle explanation box to guide the user on how to use the tool.
+- `.speak-btn`: Standard button style for the Text-to-Speech trigger (🔊).
 
 ## 💻 JavaScript Patterns
 
@@ -60,6 +61,11 @@ We prefer streaming (`stream: true`) for better UX.
 Always wrap fetch calls in `try...catch` blocks.
 - **Network Errors**: Alert the user to check LM Studio/CORS.
 - **Parsing Errors**: Log to console (`console.error`) rather than failing silently.
+
+### Audio Features (TTS)
+Use the shared `speakText()` function from `utils.js`.
+- Always include a "Listen" button in the output area for text-heavy tools.
+- Ensure `stopGeneration()` also calls `stopSpeech()` to silence audio immediately.
 
 ## 📝 File Naming
 - **HTML Files**: `snake_case.html` (e.g., `story_architect.html`).

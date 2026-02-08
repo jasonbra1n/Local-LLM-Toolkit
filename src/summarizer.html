@@ -55,6 +55,7 @@
 
     <div class="output-area" id="output-container" style="display:none;">
         <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <button class="speak-btn" onclick="speakOutput()" style="margin-right: 5px;">🔊 Listen</button>
         <div id="thinking-container" style="display:none;">
             <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
             <div id="thinking-content" class="thinking-box"></div>
@@ -135,7 +136,10 @@
         );
     }
 
-    function stopGeneration() { if (abortController) abortController.abort(); }
+    function stopGeneration() { 
+        if (abortController) abortController.abort(); 
+        stopSpeech();
+    }
     function toggleThinking() {
         const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content');
         h.classList.toggle('collapsed'); c.style.display = h.classList.contains('collapsed') ? 'none' : 'block';
@@ -143,6 +147,10 @@
     function copyToClipboard() {
         const copyText = document.getElementById("result-output");
         copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied!");
+    }
+    function speakOutput() {
+        const text = document.getElementById('result-output').value;
+        if(text) speakText(text);
     }
 </script>
 </body>

@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Text-to-Speech (TTS)**: Integrated Web Speech API to read generated text aloud without external dependencies.
+- **UI**: Added "Listen" (🔊) buttons to Chat Interface, Novel Writer, Story Architect, Email Polisher, Summarizer, Prompt Generator, and Idea Generator.
+- **Utils**: Added `speakText()` and `stopSpeech()` functions to `src/utils.js`.
 - **Idea Generator**: Tool to brainstorm concepts, topics, and ideas.
 - **Settings**: Added ability to select and save a default local model ID.
 
