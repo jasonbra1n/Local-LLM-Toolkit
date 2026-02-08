@@ -302,8 +302,9 @@ async function loadModels(config) {
 /**
  * Speaks the provided text using the browser's native Web Speech API.
  * @param {string} text - The text to read aloud.
+ * @param {Function} [onEnd] - Optional callback when speech finishes.
  */
-function speakText(text) {
+function speakText(text, onEnd) {
     if (!('speechSynthesis' in window)) {
         console.warn("Web Speech API not supported.");
         return;
@@ -315,6 +316,10 @@ function speakText(text) {
     const cleanText = text.replace(/[*#`]/g, '');
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
+    if (onEnd) {
+        utterance.onend = onEnd;
+        utterance.onerror = onEnd;
+    }
     // Optional: utterance.rate = 1.1; 
     window.speechSynthesis.speak(utterance);
 }

@@ -206,11 +206,18 @@
     function toggleThinking() { const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content'); h.classList.toggle('collapsed'); c.style.display = h.classList.contains('collapsed') ? 'none' : 'block'; }
 
     function speakLastResponse() {
+        const btn = document.getElementById('speak-btn');
+        if (btn.innerText === "⏹️") {
+            stopSpeech();
+            btn.innerText = "🔊";
+            return;
+        }
         const history = document.getElementById('chat-history');
         const assistantMsgs = history.querySelectorAll('.message.assistant');
         if (assistantMsgs.length > 0) {
             const lastMsg = assistantMsgs[assistantMsgs.length - 1];
-            speakText(lastMsg.innerText);
+            btn.innerText = "⏹️";
+            speakText(lastMsg.innerText, () => btn.innerText = "🔊");
         }
     }
 </script>

@@ -171,8 +171,16 @@
         alert("Copied to clipboard!");
     }
     function speakOutput() {
+        const btn = document.querySelector('.speak-btn');
+        if (btn.innerText.includes("Stop")) {
+            stopSpeech();
+            btn.innerText = "🔊 Listen";
+            return;
+        }
         const text = document.getElementById('result-output').value;
-        if(text) speakText(text);
+        if(!text) return;
+        btn.innerText = "⏹️ Stop";
+        speakText(text, () => btn.innerText = "🔊 Listen");
     }
 </script>
 
