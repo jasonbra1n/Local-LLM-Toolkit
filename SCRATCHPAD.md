@@ -17,3 +17,6 @@ The following tools have been updated to use `generateText()` and `getConfig()`:
 - [x] `email_polisher.html`
 - [x] `regex_wizard.html`
 - [x] `universal_translator.html`
+
+### 🔊 Audio Features
+- [x] **Text-to-Speech**: Implement `speakText()` in `utils.js` using the Web Speech API.

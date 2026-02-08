@@ -58,6 +58,7 @@ Prioritized list of providers to add to `src/utils.js`:
 - [x] **File Persistence**: Ability to save generated `AGENT.md` and `SKILLS.md` files from the browser.
 - [x] **Stop Generation**: Button to cancel streaming responses.
 - **Settings Refactor**: As we add more providers, `settings.html` will need a tabbed interface or collapsible sections to manage API keys cleanly.
+- **Text-to-Speech (TTS)**: Native browser integration to read generated text aloud via Web Speech API.
 - **UI Polish**:
   - [x] Add Icons to the Dashboard cards.
   - Syntax highlighting for code outputs.

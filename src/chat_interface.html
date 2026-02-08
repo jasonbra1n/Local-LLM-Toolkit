@@ -98,6 +98,7 @@
         <div style="display: flex; flex-direction: column; gap: 5px; width: 100px;">
             <button id="send-btn" onclick="sendMessage()">Send</button>
             <button id="stop-btn" class="stop-btn" onclick="stopGeneration()" style="margin-top: 0; padding: 12px;">Stop</button>
+            <button id="speak-btn" onclick="speakLastResponse()" style="background-color: #45475a;" title="Read Last Response">🔊</button>
         </div>
     </div>
 </div>
@@ -197,8 +198,21 @@
         );
     }
 
-    function stopGeneration() { if (abortController) abortController.abort(); }
+    function stopGeneration() { 
+        if (abortController) abortController.abort(); 
+        stopSpeech(); // Also stop any active audio
+    }
+
     function toggleThinking() { const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content'); h.classList.toggle('collapsed'); c.style.display = h.classList.contains('collapsed') ? 'none' : 'block'; }
+
+    function speakLastResponse() {
+        const history = document.getElementById('chat-history');
+        const assistantMsgs = history.querySelectorAll('.message.assistant');
+        if (assistantMsgs.length > 0) {
+            const lastMsg = assistantMsgs[assistantMsgs.length - 1];
+            speakText(lastMsg.innerText);
+        }
+    }
 </script>
 </body>
 </html>

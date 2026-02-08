@@ -298,3 +298,27 @@ async function loadModels(config) {
         statusText.innerText = "Error: Check Settings & CORS";
     }
 }
+
+/**
+ * Speaks the provided text using the browser's native Web Speech API.
+ * @param {string} text - The text to read aloud.
+ */
+function speakText(text) {
+    if (!('speechSynthesis' in window)) {
+        console.warn("Web Speech API not supported.");
+        return;
+    }
+    // Stop any current speech
+    window.speechSynthesis.cancel();
+
+    // Remove basic markdown symbols (*, #, `) for cleaner audio
+    const cleanText = text.replace(/[*#`]/g, '');
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    // Optional: utterance.rate = 1.1; 
+    window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeech() {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+}
