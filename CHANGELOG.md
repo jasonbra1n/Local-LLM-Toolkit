@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 - **UI**: Added "Listen" (🔊) buttons to Chat Interface, Novel Writer, Story Architect, Email Polisher, Summarizer, Prompt Generator, and Idea Generator.
 - **Utils**: Added `speakText()` and `stopSpeech()` functions to `src/utils.js`.
 - **Idea Generator**: Tool to brainstorm concepts, topics, and ideas.
+- **Meeting Notes**: Tool to convert raw transcripts into structured minutes and action items.
+- **Visual Prompter**: Tool to generate detailed prompts for Midjourney, Stable Diffusion & Video.
+- **Project Architect**: Tool to generate "Mega-Prompts" for full project builds.
+- **YouTube Script Writer**: Tool to generate engaging video scripts.
+- **Quiz Generator**: Tool to generate quizzes and flashcards from source text.
 - **Settings**: Added ability to select and save a default local model ID.
 
 ### Changed

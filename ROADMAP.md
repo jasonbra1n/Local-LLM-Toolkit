@@ -29,6 +29,11 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] `regex_wizard.html`: Tool to generate Regular Expressions.
   - [x] `novel_writer.html`: Tool to generate prose from outlines.
   - [x] `chat_interface.html`: General purpose chat tool.
+  - [x] `meeting_notes.html`: Tool to structure transcripts into minutes.
+  - [x] `visual_prompter.html`: Tool to generate image/video prompts.
+  - [x] `project_prompt_builder.html`: Tool to generate "Mega-Prompts" for full project builds.
+  - [x] `youtube_script_writer.html`: Tool to generate video scripts.
+  - [x] `quiz_generator.html`: Tool to generate quizzes and flashcards.
 
 ## 🔌 Provider Integration
 - **Local Providers**:
@@ -58,7 +63,7 @@ Prioritized list of providers to add to `src/utils.js`:
 - [x] **File Persistence**: Ability to save generated `AGENT.md` and `SKILLS.md` files from the browser.
 - [x] **Stop Generation**: Button to cancel streaming responses.
 - **Settings Refactor**: As we add more providers, `settings.html` will need a tabbed interface or collapsible sections to manage API keys cleanly.
-- **Text-to-Speech (TTS)**: Native browser integration to read generated text aloud via Web Speech API.
+- [x] **Text-to-Speech (TTS)**: Native browser integration to read generated text aloud via Web Speech API.
 - **UI Polish**:
   - [x] Add Icons to the Dashboard cards.
   - Syntax highlighting for code outputs.

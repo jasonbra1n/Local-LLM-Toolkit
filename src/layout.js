@@ -19,7 +19,12 @@ const APP_CONFIG = {
         { name: "Regex Wizard", link: "regex_wizard.html", icon: "🧙‍♂️" },
         { name: "Universal Translator", link: "universal_translator.html", icon: "🌐" },
         { name: "Agent Builder", link: "agent_builder.html", icon: "🤖" },
-        { name: "Skill Builder", link: "skill_builder.html", icon: "🛠️" }
+        { name: "Skill Builder", link: "skill_builder.html", icon: "🛠️" },
+        { name: "Meeting Notes", link: "meeting_notes.html", icon: "📅" },
+        { name: "Visual Prompter", link: "visual_prompter.html", icon: "🎨" },
+        { name: "Project Architect", link: "project_prompt_builder.html", icon: "🏗️" },
+        { name: "YouTube Script", link: "youtube_script_writer.html", icon: "📹" },
+        { name: "Quiz Generator", link: "quiz_generator.html", icon: "❓" }
     ]
 };
 

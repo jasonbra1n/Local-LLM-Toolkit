@@ -4,6 +4,7 @@
 
 ### 🏗️ Architecture Refactor (Centralized Router)
 The following tools have been updated to use `generateText()` and `getConfig()`:
+- [ ] `meeting_notes.html` (New)
 - [x] `prompt_generator.html`
 - [x] `summarizer.html`
 - [x] `story_architect.html`

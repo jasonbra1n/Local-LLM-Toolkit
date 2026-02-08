@@ -10,6 +10,7 @@ A suite of privacy-focused, local-first AI tools designed to run entirely in you
   - **Chat Interface**: General-purpose chat with history and streaming.
   - **Prompt Generator**: Create robust system prompts using meta-prompting.
   - **Story Architect**: Generate comprehensive story bibles and outlines.
+  - **Idea Generator**: Brainstorm concepts, blog topics, and plot hooks.
   - **Novel Writer**: Draft prose based on structured outlines.
   - **Agent Builder**: Define AI personas and export to `AGENT.md`.
   - **Skill Builder**: Define reusable capabilities and export to `SKILLS.md`.
@@ -17,12 +18,15 @@ A suite of privacy-focused, local-first AI tools designed to run entirely in you
   - **Email Polisher**: Draft professional emails with tone control.
   - **Regex Wizard**: Generate complex regex patterns from plain English.
   - **Universal Translator**: Localize JSON files while preserving keys.
+  - **Summarizer**: Condense long text into executive summaries or bullet points.
+  - **Meeting Notes**: Convert raw transcripts into structured minutes and action items.
 - **Advanced UI**:
   - Real-time streaming responses.
   - "Thinking Process" visualization for reasoning models.
   - **Multi-Provider Support**: Switch between LM Studio, Ollama, and Google Gemini.
   - **Control**: Stop generation at any time.
   - **Persistence**: Save generated Agents and Skills directly to `.md` files.
+  - **Text-to-Speech**: Listen to generated output using native browser speech synthesis.
 
 ## 🚀 Getting Started
 
