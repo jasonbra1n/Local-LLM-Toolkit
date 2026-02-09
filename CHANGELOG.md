@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [v0.1.1] - 2026-02-04
+## [v0.1.1] - 2026-02-08
 
 ### Added
 - **Text-to-Speech (TTS)**: Integrated Web Speech API to read generated text aloud without external dependencies.
