@@ -32,6 +32,10 @@
     </div>
 
     <div class="input-group"><label>Select Model:</label><select id="model-select"><option value="local-model">Loading...</option></select></div>
+    <div class="input-group" style="text-align: right;">
+        <input type="file" id="import-file" accept=".md" style="display:none" onchange="loadAgentFile(this)">
+        <button onclick="document.getElementById('import-file').click()" style="width: auto; background-color: #45475a; padding: 8px 15px; font-size: 0.9rem;">📂 Import AGENT.md</button>
+    </div>
     <div class="input-group"><label>Agent Name & Role:</label><input type="text" id="agent-name" placeholder="e.g. 'Nexus', The Orchestrator"></div>
     <div class="input-group"><label>Primary Goal:</label><textarea id="agent-goal" rows="2" placeholder="What is the main purpose of this agent?"></textarea></div>
     <div class="input-group"><label>Key Skills (Comma separated):</label><input type="text" id="agent-skills" placeholder="e.g. Web Search, Python Execution, File I/O"></div>
@@ -152,6 +156,70 @@
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(link.href);
+    }
+
+    function loadAgentFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const content = e.target.result;
+            parseAgentMarkdown(content);
+        };
+        reader.readAsText(file);
+        input.value = ''; // Reset so same file can be selected again
+    }
+
+    function parseAgentMarkdown(md) {
+        // Populate the output area first so the user can see the full content
+        document.getElementById('result-output').value = md;
+        document.getElementById('output-container').style.display = 'block';
+
+        let nameFound = false;
+
+        // 1. Try to find "Identity" section and extract Name
+        const idMatch = md.match(/(?:#+|\*\*|\d+\.)\s*Identity.*?(?:\n|$)([\s\S]*?)(?=(?:#+|\*\*|\d+\.)\s*Mission|$)/i);
+        if (idMatch) {
+            const identityContent = idMatch[1];
+            // Look for explicit "Name:" field
+            const nameLineMatch = identityContent.match(/(?:-|\*|\d+\.)?\s*(?:\*\*)?Name:?(?:\*\*)?\s*(.+)/i);
+            
+            if (nameLineMatch) {
+                document.getElementById('agent-name').value = nameLineMatch[1].trim();
+                nameFound = true;
+            } else {
+                let rawId = identityContent.trim();
+                let firstLine = rawId.split('\n')[0].replace(/[-*]\s+/, '').replace(/\*\*/g, '').replace(/Name:\s*/i, '');
+                if (firstLine) { document.getElementById('agent-name').value = firstLine.trim(); nameFound = true; }
+            }
+        }
+
+        // 2. If not found in Identity, try H1 header (ignoring generic filenames)
+        if (!nameFound) {
+            const h1Match = md.match(/^#\s+(.+)$/m);
+            if (h1Match) {
+                const h1Text = h1Match[1].trim();
+                if (!h1Text.toLowerCase().includes('agent.md')) {
+                    document.getElementById('agent-name').value = h1Text;
+                }
+            }
+        }
+
+        // 2. Mission/Goal
+        const missionMatch = md.match(/(?:#+|\*\*|\d+\.)\s*Mission.*?(?:\n|$)([\s\S]*?)(?=(?:#+|\*\*|\d+\.)\s*Capabilities|$)/i);
+        if (missionMatch) {
+            document.getElementById('agent-goal').value = missionMatch[1].trim();
+        }
+
+        // 3. Skills
+        const capsMatch = md.match(/(?:#+|\*\*|\d+\.)\s*Capabilities.*?(?:\n|$)([\s\S]*?)(?=(?:#+|\*\*|\d+\.)\s*Constraints|$)/i);
+        if (capsMatch) {
+            // Clean up bullets and newlines to make it comma-separated
+            let rawSkills = capsMatch[1];
+            let skills = rawSkills.replace(/^[-*]\s+/gm, '').split('\n').map(s => s.trim()).filter(s => s).join(', ');
+            document.getElementById('agent-skills').value = skills;
+        }
     }
 </script>
 </body>

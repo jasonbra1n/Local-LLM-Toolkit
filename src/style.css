@@ -232,7 +232,8 @@ button:disabled {
 .nav-links a:hover, .nav-links a.active { color: var(--accent-color); }
 
 /* Hamburger Menu */
-.hamburger { display: none; font-size: 1.5rem; background: none; border: none; color: var(--text-color); cursor: pointer; padding: 0; }
+.hamburger { display: none; font-size: 1.5rem; background: none; border: none; color: var(--text-color); cursor: pointer; padding: 0; width: auto; }
+.hamburger:hover { background: none; color: var(--accent-color); }
 
 @media (max-width: 768px) {
     .hamburger { display: block; }

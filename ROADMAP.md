@@ -34,6 +34,7 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] `project_prompt_builder.html`: Tool to generate "Mega-Prompts" for full project builds.
   - [x] `youtube_script_writer.html`: Tool to generate video scripts.
   - [x] `quiz_generator.html`: Tool to generate quizzes and flashcards.
+  - [x] `persona_chat.html`: Tool to define and chat with specific characters.
 
 ## 🔌 Provider Integration
 - **Local Providers**:

@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [v0.1.1] - 2026-02-04
+
 ### Added
 - **Text-to-Speech (TTS)**: Integrated Web Speech API to read generated text aloud without external dependencies.
 - **UI**: Added "Listen" (🔊) buttons to Chat Interface, Novel Writer, Story Architect, Email Polisher, Summarizer, Prompt Generator, and Idea Generator.
@@ -15,13 +17,21 @@ All notable changes to this project will be documented in this file.
 - **YouTube Script Writer**: Tool to generate engaging video scripts.
 - **Quiz Generator**: Tool to generate quizzes and flashcards from source text.
 - **Settings**: Added ability to select and save a default local model ID.
+- **TTS**: Added smart voice selection to `utils.js`. Now defaults to higher-quality browser voices (e.g., Google US English) if available.
+- **Persona Chat**: Tool to define and chat with specific characters.
+- **Agent Builder**: Added ability to import and edit existing `AGENT.md` files.
+- **Settings**: Added "Default System Prompt" configuration for the Chat Interface.
 
 ### Changed
 - **Refactor**: Centralized model loading and connection logic into `loadModels()` within `utils.js`.
 - **Settings**: Replaced manual model ID input with a dynamic dropdown that fetches from LM Studio.
+- **Settings**: Refactored into a tabbed interface to organize Provider and General settings.
+- **Chat Interface**: Improved layout by moving the "Clear Chat" button to a dedicated row.
 
 ### Fixed
 - **Reasoning UI**: Improved parsing logic for `<think>` tags to prevent text loss when tags are split across streaming chunks.
+- **UI**: Fixed hamburger menu styling in `style.css` to prevent full-width stretching.
+- **UI**: Fixed vertical alignment issues with the "Refresh" button in `settings.html`.
 
 ## [v0.1.0] - 2026-02-04
 

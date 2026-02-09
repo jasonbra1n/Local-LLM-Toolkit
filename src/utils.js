@@ -300,6 +300,33 @@ async function loadModels(config) {
 }
 
 /**
+ * TTS Voice Management
+ */
+let _availableVoices = [];
+
+function _loadVoices() {
+    if ('speechSynthesis' in window) {
+        _availableVoices = window.speechSynthesis.getVoices();
+    }
+}
+
+if ('speechSynthesis' in window) {
+    // Chrome/Brave load voices asynchronously
+    window.speechSynthesis.onvoiceschanged = _loadVoices;
+    _loadVoices();
+}
+
+/**
+ * Sets the preferred voice by name in localStorage.
+ * Usage in Console: setPreferredVoice("Google US English");
+ * @param {string} voiceName 
+ */
+function setPreferredVoice(voiceName) {
+    localStorage.setItem('preferred_voice_name', voiceName);
+    console.log(`Voice preference set to: ${voiceName}`);
+}
+
+/**
  * Speaks the provided text using the browser's native Web Speech API.
  * @param {string} text - The text to read aloud.
  * @param {Function} [onEnd] - Optional callback when speech finishes.
@@ -312,10 +339,26 @@ function speakText(text, onEnd) {
     // Stop any current speech
     window.speechSynthesis.cancel();
 
+    // Ensure voices are loaded
+    if (_availableVoices.length === 0) _loadVoices();
+
     // Remove basic markdown symbols (*, #, `) for cleaner audio
     const cleanText = text.replace(/[*#`]/g, '');
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
+
+    // Apply Voice Preference
+    const preferredName = localStorage.getItem('preferred_voice_name');
+    if (preferredName) {
+        const voice = _availableVoices.find(v => v.name === preferredName);
+        if (voice) utterance.voice = voice;
+    } else {
+        // Smart Default: Prefer "Google" voices in Brave/Chrome if no preference set
+        const bestVoice = _availableVoices.find(v => v.name.includes("Google US English")) 
+                       || _availableVoices.find(v => v.name.includes("Google") && v.lang.startsWith("en"));
+        if (bestVoice) utterance.voice = bestVoice;
+    }
+
     if (onEnd) {
         utterance.onend = onEnd;
         utterance.onerror = onEnd;

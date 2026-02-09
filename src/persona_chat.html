@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Interface</title>
+    <title>Persona Chat</title>
     <link rel="stylesheet" href="style.css">
     <script src="utils.js"></script>
     <script src="layout.js"></script>
     <style>
         :root {
-            --accent-color: #89b4fa; /* Standard Blue */
+            --accent-color: #f5e0dc; /* Rosewater */
+            --button-hover: #f2cdcd;
         }
-        .container { max-width: 900px; display: flex; flex-direction: column; height: 85vh; }
+        .container { max-width: 900px; display: flex; flex-direction: column; height: 90vh; }
         
-        /* Chat Specific Styles */
         #chat-history {
             flex: 1;
             overflow-y: auto;
@@ -27,39 +27,10 @@
             gap: 15px;
         }
 
-        .message {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            line-height: 1.5;
-            position: relative;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
-
-        .message.user {
-            align-self: flex-end;
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            border-bottom-right-radius: 2px;
-        }
-
-        .message.assistant {
-            align-self: flex-start;
-            background-color: var(--input-bg);
-            border: 1px solid #45475a;
-            border-bottom-left-radius: 2px;
-        }
-
-        .message.system {
-            align-self: center;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            font-style: italic;
-            background: none;
-            border: none;
-            padding: 5px;
-        }
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 12px; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap; }
+        .message.user { align-self: flex-end; background-color: var(--accent-color); color: #1e1e2e; border-bottom-right-radius: 2px; }
+        .message.assistant { align-self: flex-start; background-color: var(--input-bg); border: 1px solid #45475a; border-bottom-left-radius: 2px; }
+        .message.system { align-self: center; font-size: 0.8rem; opacity: 0.7; font-style: italic; }
 
         .input-area { display: flex; gap: 10px; }
         #user-input { flex: 1; margin-bottom: 0; }
@@ -67,7 +38,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>💬 Chat Interface</h1>
+    <h1>🎭 Persona Chat</h1>
     
     <div class="status-bar">
         <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
@@ -75,15 +46,32 @@
     </div>
 
     <div class="input-group">
-        <label>Model:</label>
+        <label>Select Model:</label>
         <select id="model-select"><option value="local-model">Loading...</option></select>
     </div>
 
+    <!-- Persona Definition -->
+    <div class="row input-group">
+        <div class="col">
+            <label>Character Name:</label>
+            <input type="text" id="char-name" placeholder="e.g. Sherlock Holmes">
+        </div>
+        <div class="col">
+            <label>Greeting (Optional):</label>
+            <input type="text" id="char-greeting" placeholder="e.g. The game is afoot!">
+        </div>
+    </div>
+    <div class="input-group">
+        <label>Persona Description / System Prompt:</label>
+        <textarea id="char-prompt" rows="3" placeholder="You are Sherlock Holmes. You are observant, logical, and slightly arrogant..."></textarea>
+    </div>
+
     <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-        <button onclick="clearChat()" style="width: auto; padding: 8px 15px; font-size: 0.9rem; background-color: #45475a;">🗑️ Clear Chat</button>
+        <button onclick="resetPersona()" style="width: auto; padding: 8px 15px; font-size: 0.9rem; background-color: #45475a;">🔄 Reset / Apply Persona</button>
     </div>
 
     <div id="chat-history">
+        <div class="message system">Define a character above to start chatting.</div>
     </div>
 
     <div id="thinking-container" style="display:none; margin-bottom: 10px;">
@@ -102,15 +90,10 @@
 </div>
 
 <script>
-    function getSystemPrompt() {
-        return localStorage.getItem('default_system_prompt') || "You are a helpful AI assistant.";
-    }
-
-    let chatMessages = [{ role: "system", content: getSystemPrompt() }];
+    let chatMessages = [];
     let abortController = null;
 
     window.onload = async () => {
-        document.getElementById('chat-history').innerHTML = `<div class="message system">System: ${getSystemPrompt()}</div>`;
         await loadModels(getConfig());
     };
 
@@ -124,9 +107,21 @@
         return div;
     }
 
-    function clearChat() {
-        chatMessages = [{ role: "system", content: getSystemPrompt() }];
-        document.getElementById('chat-history').innerHTML = `<div class="message system">System: ${getSystemPrompt()}</div>`;
+    function resetPersona() {
+        const name = document.getElementById('char-name').value || "AI";
+        const prompt = document.getElementById('char-prompt').value || "You are a helpful AI assistant.";
+        const greeting = document.getElementById('char-greeting').value;
+
+        chatMessages = [{ role: "system", content: prompt }];
+        
+        const history = document.getElementById('chat-history');
+        history.innerHTML = `<div class="message system">System: Persona set to <strong>${name}</strong></div>`;
+        
+        if (greeting) {
+            appendMessage('assistant', greeting);
+            chatMessages.push({ role: "assistant", content: greeting });
+        }
+
         document.getElementById('thinking-container').style.display = 'none';
         document.getElementById('thinking-content').textContent = '';
     }
@@ -136,15 +131,16 @@
         const text = input.value.trim();
         if (!text) return;
 
+        // If chat hasn't started, init with current inputs
+        if (chatMessages.length === 0) resetPersona();
+
         const globalConfig = getConfig();
         const model = document.getElementById('model-select').value;
 
-        // Add User Message
         appendMessage('user', text);
         chatMessages.push({ role: "user", content: text });
         input.value = "";
 
-        // UI Setup
         const sendBtn = document.getElementById('send-btn');
         const stopBtn = document.getElementById('stop-btn');
         const thinkBox = document.getElementById('thinking-container');
@@ -153,15 +149,11 @@
         sendBtn.disabled = true; stopBtn.style.display = 'block';
         thinkBox.style.display = 'none'; thinkContent.textContent = "";
 
-        // Create Assistant Bubble
         const assistantBubble = appendMessage('assistant', "...");
         let fullResponse = "";
 
         abortController = new AbortController();
-        const config = {
-            ...globalConfig,
-            model: model
-        };
+        const config = { ...globalConfig, model: model };
 
         let isThinking = false;
         assistantBubble.textContent = "";
@@ -169,8 +161,7 @@
         await generateText(chatMessages, config,
             (content) => {
                 if (!isThinking && content.includes('<think>')) {
-                    isThinking = true;
-                    thinkBox.style.display = 'block';
+                    isThinking = true; thinkBox.style.display = 'block';
                     const parts = content.split('<think>');
                     if (parts[0]) { fullResponse += parts[0]; assistantBubble.textContent += parts[0]; }
                     if (parts[1]) thinkContent.textContent += parts[1];
@@ -179,50 +170,18 @@
                     const parts = content.split('</think>');
                     if (parts[0]) thinkContent.textContent += parts[0];
                     if (parts[1]) { fullResponse += parts[1]; assistantBubble.textContent += parts[1]; }
-                } else if (isThinking) {
-                    thinkContent.textContent += content;
-                    thinkContent.scrollTop = thinkContent.scrollHeight;
-                } else {
-                    fullResponse += content;
-                    assistantBubble.textContent += content;
-                    const history = document.getElementById('chat-history');
-                    history.scrollTop = history.scrollHeight;
-                }
+                } else if (isThinking) { thinkContent.textContent += content; thinkContent.scrollTop = thinkContent.scrollHeight;
+                } else { fullResponse += content; assistantBubble.textContent += content; document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight; }
             },
-            () => { // onComplete
-                chatMessages.push({ role: "assistant", content: fullResponse });
-                sendBtn.disabled = false; stopBtn.style.display = 'none'; abortController = null;
-            },
-            (err) => { // onError
-                if (err.name !== 'AbortError') assistantBubble.textContent += `\n[Error: ${err.message}]`;
-                sendBtn.disabled = false; stopBtn.style.display = 'none';
-            },
+            () => { chatMessages.push({ role: "assistant", content: fullResponse }); sendBtn.disabled = false; stopBtn.style.display = 'none'; abortController = null; },
+            (err) => { if (err.name !== 'AbortError') assistantBubble.textContent += `\n[Error: ${err.message}]`; sendBtn.disabled = false; stopBtn.style.display = 'none'; },
             abortController.signal
         );
     }
 
-    function stopGeneration() { 
-        if (abortController) abortController.abort(); 
-        stopSpeech(); // Also stop any active audio
-    }
-
+    function stopGeneration() { if (abortController) abortController.abort(); stopSpeech(); }
     function toggleThinking() { const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content'); h.classList.toggle('collapsed'); c.style.display = h.classList.contains('collapsed') ? 'none' : 'block'; }
-
-    function speakLastResponse() {
-        const btn = document.getElementById('speak-btn');
-        if (btn.innerText === "⏹️") {
-            stopSpeech();
-            btn.innerText = "🔊";
-            return;
-        }
-        const history = document.getElementById('chat-history');
-        const assistantMsgs = history.querySelectorAll('.message.assistant');
-        if (assistantMsgs.length > 0) {
-            const lastMsg = assistantMsgs[assistantMsgs.length - 1];
-            btn.innerText = "⏹️";
-            speakText(lastMsg.innerText, () => btn.innerText = "🔊");
-        }
-    }
+    function speakLastResponse() { const btn = document.getElementById('speak-btn'); if (btn.innerText === "⏹️") { stopSpeech(); btn.innerText = "🔊"; return; } const history = document.getElementById('chat-history'); const assistantMsgs = history.querySelectorAll('.message.assistant'); if (assistantMsgs.length > 0) { const lastMsg = assistantMsgs[assistantMsgs.length - 1]; btn.innerText = "⏹️"; speakText(lastMsg.innerText, () => btn.innerText = "🔊"); } }
 </script>
 </body>
 </html>

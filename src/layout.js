@@ -6,7 +6,7 @@
 
 const APP_CONFIG = {
     name: "Local LLM Toolkit",
-    version: "v0.1.0",
+    version: "v0.1.1",
     tools: [
         { name: "Chat Interface", link: "chat_interface.html", icon: "💬" },
         { name: "Prompt Generator", link: "prompt_generator.html", icon: "📝" },
@@ -24,7 +24,8 @@ const APP_CONFIG = {
         { name: "Visual Prompter", link: "visual_prompter.html", icon: "🎨" },
         { name: "Project Architect", link: "project_prompt_builder.html", icon: "🏗️" },
         { name: "YouTube Script", link: "youtube_script_writer.html", icon: "📹" },
-        { name: "Quiz Generator", link: "quiz_generator.html", icon: "❓" }
+        { name: "Quiz Generator", link: "quiz_generator.html", icon: "❓" },
+        { name: "Persona Chat", link: "persona_chat.html", icon: "🎭" }
     ]
 };
 
