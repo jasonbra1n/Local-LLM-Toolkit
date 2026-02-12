@@ -265,30 +265,51 @@ async function loadModels(config) {
     const select = document.getElementById('model-select');
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('status-text');
+    const targetDisplay = document.getElementById('target-display');
+
+    // Update Target Display (Centrally handles the "Target: Loading..." UI)
+    if (targetDisplay) {
+        if (['gemini', 'openai', 'groq', 'deepseek', 'mistral'].includes(provider)) {
+            targetDisplay.innerText = `Target: ${provider.charAt(0).toUpperCase() + provider.slice(1)} API`;
+        } else {
+            targetDisplay.innerText = `Target: ${base}`;
+        }
+    }
 
     // Cloud Providers (Fixed Model)
     if (['gemini', 'openai', 'groq', 'deepseek', 'mistral'].includes(provider)) {
         statusText.innerText = `${provider.charAt(0).toUpperCase() + provider.slice(1)} Connected`;
-        select.innerHTML = `<option value="${model}">${model}</option>`;
+        if (select) select.innerHTML = `<option value="${model}">${model}</option>`;
         statusDot.classList.add('online');
         return;
     }
 
     // Local Providers (Fetch Models)
+    // Check for Mixed Content (HTTPS hosting -> HTTP Local API)
+    // Note: Browsers allow http://127.0.0.1 from https, but block http://192.168.x.x
+    if (window.location.protocol === 'https:' && base.startsWith('http://') && !base.includes('127.0.0.1') && !base.includes('localhost')) {
+        statusText.innerText = "Error: Mixed Content Blocked";
+        console.error("Security Error: Browsers block HTTPS pages from connecting to HTTP local servers. Please run this toolkit locally or via a local HTTP server.");
+        alert("Security Error: Mixed Content\n\nYou are running this app via HTTPS (GitHub Pages) but trying to connect to an insecure HTTP local server.\n\nBrowsers block this. Please host the toolkit files locally (e.g., python -m http.server) to use it on your network.");
+        return;
+    }
+
     try {
         const response = await fetch(`${base}/models`);
         if(response.ok) {
             const data = await response.json();
             if (data.data && data.data.length > 0) {
-                select.innerHTML = ''; 
-                data.data.forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m.id;
-                    option.text = m.id;
-                    select.appendChild(option);
-                });
-                // Auto-select default if it exists in the list
-                if (model && Array.from(select.options).some(o => o.value === model)) select.value = model;
+                if (select) {
+                    select.innerHTML = ''; 
+                    data.data.forEach(m => {
+                        const option = document.createElement('option');
+                        option.value = m.id;
+                        option.text = m.id;
+                        select.appendChild(option);
+                    });
+                    // Auto-select default if it exists in the list
+                    if (model && Array.from(select.options).some(o => o.value === model)) select.value = model;
+                }
             }
             statusDot.classList.add('online');
             statusText.innerText = "Local Server Connected";

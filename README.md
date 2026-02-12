@@ -42,6 +42,19 @@ A suite of privacy-focused, local-first AI tools designed to run entirely in you
 2. Open `index.html` in your web browser.
 3. Select a tool from the dashboard.
 
+### 📡 Local Network Usage (LAN)
+To access the toolkit from other devices on your network (e.g., a tablet or laptop):
+
+1. **Host via HTTP**: Browsers block secure websites (like GitHub Pages) from connecting to insecure local servers (Mixed Content). You must host the toolkit files yourself via HTTP.
+   - Open a terminal in the `Local-LLM-Toolkit` folder.
+   - Run: `python -m http.server 8000`
+2. **Configure LM Studio**:
+   - In Server Options, ensure the server is listening on your Network IP (or `0.0.0.0`) instead of just `localhost`.
+   - Ensure Port `1234` is allowed through your firewall.
+3. **Connect**:
+   - On your device, go to `http://YOUR_PC_IP:8000/src/`.
+   - In **Settings**, set the Provider URL to `http://YOUR_PC_IP:1234/v1`.
+
 ## 📂 Project Structure
 
 - `src/`: Contains all tool HTML files.

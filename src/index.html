@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local LLM Toolkit</title>
     <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
     <script src="layout.js"></script>
     <style>
         .container {
@@ -133,8 +134,20 @@
             <h2>🎭 Persona Chat</h2>
             <p>Define a character (e.g., Sherlock Holmes) and chat with them.</p>
         </a>
+        <a href="markdown_converter.html" class="card">
+            <h2>📝 Markdown to HTML</h2>
+            <p>Convert Markdown to clean HTML for blogs.</p>
+        </a>
     </div>
 </div>
 
+<script>
+    // Initialize connection check for the dashboard status bar
+    window.onload = async () => {
+        const config = getConfig();
+        if(document.getElementById('target-display')) document.getElementById('target-display').innerText = `Target: ${config.base}`;
+        await loadModels(config);
+    };
+</script>
 </body>
 </html>

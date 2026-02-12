@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown to HTML - Local LLM Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --accent-color: #fab387; /* Peach/Orange */
+        }
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .split-view { grid-template-columns: 1fr; }
+        }
+        #preview-box {
+            background: #fff; /* White background for preview accuracy */
+            color: #000;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-y: auto;
+            min-height: 300px;
+            border: 1px solid #ccc;
+        }
+        /* Basic preview styles to mimic a generic blog */
+        #preview-box h1, #preview-box h2, #preview-box h3 { color: #333; }
+        #preview-box p { line-height: 1.6; margin-bottom: 1em; }
+        #preview-box code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        #preview-box pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Markdown to HTML</h1>
+
+        <div class="card">
+            <div class="input-group">
+                <label>Model</label>
+                <select id="model-select"></select>
+            </div>
+
+            <div class="input-group">
+                <label>Markdown Input</label>
+                <textarea id="input-text" rows="10" placeholder="Paste your Markdown here (e.g., from VS Code)..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Custom Instructions (Optional)</label>
+                <input type="text" id="custom-instructions" placeholder="e.g., 'Add Bootstrap classes', 'Make headers blue', 'Format for Blogger'">
+            </div>
+
+            <div class="button-group">
+                <button onclick="generate()">Convert to HTML</button>
+                <button id="stop-btn" class="secondary" onclick="stopGeneration()" disabled>Stop</button>
+                <a href="index.html" class="button secondary">Back</a>
+            </div>
+        </div>
+
+        <div class="split-view">
+            <!-- Raw HTML Output -->
+            <div class="card">
+                <h3>HTML Code</h3>
+                <div id="output-box" class="output-box"></div>
+                <div class="button-group" style="margin-top: 10px;">
+                    <button onclick="copyToClipboard()" class="secondary">Copy Code</button>
+                </div>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="card">
+                <h3>Live Preview</h3>
+                <div id="preview-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="layout.js"></script>
+    <script>
+        const SYSTEM_PROMPT = "You are an expert web developer and content formatter. Your task is to convert the provided Markdown text into clean, semantic HTML5 code. \n\nRULES:\n1. Output ONLY the HTML code inside the body tags (do not include <html>, <head>, or <body> tags unless requested).\n2. Do not wrap the output in markdown code blocks (```html). Just return the raw code.\n3. Ensure the HTML is valid and accessible.\n4. If the user provides custom styling instructions, apply them.";
+
+        let abortController = null;
+
+        // Load models on start
+        window.onload = async () => {
+            const config = getConfig();
+            document.getElementById('target-display').innerText = `Target: ${config.base}`;
+            await loadModels(config);
+        };
+
+        async function generate() {
+            const inputText = document.getElementById('input-text').value;
+            const customInstr = document.getElementById('custom-instructions').value;
+            const outputBox = document.getElementById('output-box');
+            const previewBox = document.getElementById('preview-box');
+            const stopBtn = document.getElementById('stop-btn');
+
+            if (!inputText) return alert("Please enter some Markdown text.");
+
+            outputBox.innerText = "";
+            previewBox.innerHTML = ""; // Clear preview
+            stopBtn.disabled = false;
+            abortController = new AbortController();
+
+            // Construct prompt
+            let fullPrompt = `Markdown to Convert:\n${inputText}`;
+            if (customInstr) {
+                fullPrompt += `\n\nAdditional Instructions: ${customInstr}`;
+            }
+
+            const messages = [
+                { role: "system", content: SYSTEM_PROMPT },
+                { role: "user", content: fullPrompt }
+            ];
+
+            await generateText(
+                messages,
+                getConfig(),
+                (chunk) => {
+                    // Clean up if the model adds markdown blocks despite instructions
+                    const cleanChunk = chunk.replace(/```html/g, '').replace(/```/g, '');
+                    outputBox.innerText += cleanChunk;
+                    previewBox.innerHTML = outputBox.innerText; // Update preview in real-time
+                },
+                () => {
+                    stopBtn.disabled = true;
+                },
+                (err) => {
+                    outputBox.innerText += `\nError: ${err.message}`;
+                    stopBtn.disabled = true;
+                },
+                abortController.signal
+            );
+        }
+
+        function stopGeneration() {
+            if (abortController) abortController.abort();
+            document.getElementById('stop-btn').disabled = true;
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('output-box').innerText;
+            navigator.clipboard.writeText(text).then(() => alert("HTML copied to clipboard!"));
+        }
+    </script>
+</body>
+</html>

@@ -12,6 +12,7 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] Global Settings page for Multi-Provider configuration.
   - [x] **Shared Assets**: Extracted common CSS (`style.css`) and JS (`utils.js`) to reduce code duplication.
   - [x] **Unified Layout**: Implemented `layout.js` for consistent Navigation Bar and Footer across all pages.
+  - [x] **Status Bar Refactor**: Centralized connection status and Target IP display logic in `layout.js`.
 - **System Prompt Generator**:
   - [x] Meta-Prompting logic to generate robust system instructions.
   - [x] Real-time Streaming support.
@@ -35,6 +36,7 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] `youtube_script_writer.html`: Tool to generate video scripts.
   - [x] `quiz_generator.html`: Tool to generate quizzes and flashcards.
   - [x] `persona_chat.html`: Tool to define and chat with specific characters.
+  - [x] `markdown_converter.html`: Tool to convert Markdown to HTML.
 
 ## 🔌 Provider Integration
 - **Local Providers**:

@@ -6,7 +6,7 @@
 
 const APP_CONFIG = {
     name: "Local LLM Toolkit",
-    version: "v0.1.1",
+    version: "v0.1.2",
     tools: [
         { name: "Chat Interface", link: "chat_interface.html", icon: "💬" },
         { name: "Prompt Generator", link: "prompt_generator.html", icon: "📝" },
@@ -25,7 +25,8 @@ const APP_CONFIG = {
         { name: "Project Architect", link: "project_prompt_builder.html", icon: "🏗️" },
         { name: "YouTube Script", link: "youtube_script_writer.html", icon: "📹" },
         { name: "Quiz Generator", link: "quiz_generator.html", icon: "❓" },
-        { name: "Persona Chat", link: "persona_chat.html", icon: "🎭" }
+        { name: "Persona Chat", link: "persona_chat.html", icon: "🎭" },
+        { name: "Markdown to HTML", link: "markdown_converter.html", icon: "📝" }
     ]
 };
 
@@ -82,4 +83,23 @@ document.addEventListener("DOMContentLoaded", () => {
             toolsDropdown.classList.toggle('active');
         }
     });
+
+    // 7. Inject/Standardize Status Bar
+    // This ensures every page has the connection status and dynamic target IP display.
+    const container = document.querySelector('.container');
+    const h1 = container ? container.querySelector('h1') : null;
+    const existingStatus = document.querySelector('.status-bar');
+
+    const statusBarHtml = `
+        <div class="status-bar">
+            <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking connection...</span></div>
+            <div id="target-display" style="font-size: 0.8em; opacity: 0.7;">Target: Loading...</div>
+        </div>
+    `;
+
+    if (existingStatus) {
+        existingStatus.outerHTML = statusBarHtml;
+    } else if (container && h1) {
+        h1.insertAdjacentHTML('afterend', statusBarHtml);
+    }
 });

@@ -69,11 +69,6 @@
 <div class="container">
     <h1>💬 Chat Interface</h1>
     
-    <div class="status-bar">
-        <div><span id="status-dot" class="status-indicator"></span><span id="status-text">Checking LM Studio...</span></div>
-        <div style="font-size: 0.8em; opacity: 0.7;">Target: 127.0.0.1:1234</div>
-    </div>
-
     <div class="input-group">
         <label>Model:</label>
         <select id="model-select"><option value="local-model">Loading...</option></select>
@@ -110,8 +105,10 @@
     let abortController = null;
 
     window.onload = async () => {
+        const config = getConfig();
+        document.getElementById('target-display').innerText = `Target: ${config.base}`;
         document.getElementById('chat-history').innerHTML = `<div class="message system">System: ${getSystemPrompt()}</div>`;
-        await loadModels(getConfig());
+        await loadModels(config);
     };
 
     function appendMessage(role, text) {

@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [v0.1.2] - 2026-02-11
+
+### Added
+- **Markdown to HTML Converter**: Tool to convert Markdown to clean HTML with live preview (`src/markdown_converter.html`).
+- **Documentation**: Added "Local Network Usage" guide to README for LAN access via `python -m http.server`.
+
+### Changed
+- **Architecture**: Centralized Status Bar injection in `layout.js`. All tools now receive the status bar automatically.
+- **UI**: Updated `utils.js` to dynamically display the connected Target IP/Provider (e.g., "Target: 192.168.1.5:1234") on all pages.
+- **Cleanup**: Removed hardcoded status bar HTML from all 19 tool files to reduce code duplication.
+
+### Fixed
+- **Security**: Added detection and alerts for Mixed Content errors (HTTPS hosting vs HTTP local server).
+
 ## [v0.1.1] - 2026-02-08
 
 ### Added
