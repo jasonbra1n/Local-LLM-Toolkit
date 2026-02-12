@@ -9,6 +9,7 @@ We welcome contributions! This project is designed to be a modular suite of loca
    - **Important**: Enable "Cross-Origin Resource Sharing (CORS)" in LM Studio Server settings.
 2. **Run**:
    - Simply open `src/index.html` in your browser. No server required.
+   - **Optional (Recommended)**: Run `start_server.bat` (Windows) or `./start_server.sh` (Linux/Mac) to host locally on port 8000. This avoids strict browser security restrictions.
 
 ## 🛠️ How to Add a New Tool
 

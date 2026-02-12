@@ -49,7 +49,9 @@ To access the toolkit from other devices on your network (e.g., a tablet or lapt
 
 1. **Host via HTTP**: Browsers block secure websites (like GitHub Pages) from connecting to insecure local servers (Mixed Content). You must host the toolkit files yourself via HTTP.
    - Open a terminal in the `Local-LLM-Toolkit` folder.
-   - Run: `python -m http.server 8000`
+   - Run: `python -m http.server 8000` or simply run the included script:
+     - **Windows**: Double-click `start_server.bat`.
+     - **Linux/Mac**: Run `./start_server.sh`.
 2. **Configure LM Studio**:
    - In Server Options, ensure the server is listening on your Network IP (or `0.0.0.0`) instead of just `localhost`.
    - Ensure Port `1234` is allowed through your firewall.

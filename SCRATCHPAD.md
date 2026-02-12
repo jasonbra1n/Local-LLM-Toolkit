@@ -19,7 +19,7 @@ The following tools have been updated to use `generateText()` and `getConfig()`:
 - [x] `regex_wizard.html`
 - [x] `universal_translator.html`
 - [x] **Bug Fix**: Centralized `Target: Loading...` update in `utils.js` so all tools display the correct IP.
-- [ ] **HTML Cleanup**: Remove hardcoded `<div class="status-bar">` from:
+- [x] **HTML Cleanup**: Remove hardcoded `<div class="status-bar">` from:
     - [x] `prompt_generator.html`
     - [x] `idea_generator.html`
     - [x] `summarizer.html`

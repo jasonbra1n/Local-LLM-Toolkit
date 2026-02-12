@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - **Markdown to HTML Converter**: Tool to convert Markdown to clean HTML with live preview (`src/markdown_converter.html`).
 - **Documentation**: Added "Local Network Usage" guide to README for LAN access via `python -m http.server`.
+- **Server Scripts**: Added `start_server.bat` (Windows) and `start_server.sh` (Linux/Mac) for easy local hosting.
 
 ### Changed
 - **Architecture**: Centralized Status Bar injection in `layout.js`. All tools now receive the status bar automatically.
