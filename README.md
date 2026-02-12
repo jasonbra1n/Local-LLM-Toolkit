@@ -1,5 +1,7 @@
 # Local LLM Toolkit
 
+![Version](https://img.shields.io/badge/version-v0.1.2-blue)
+
 A suite of privacy-focused, local-first AI tools designed to run entirely in your browser. While optimized for local inference (via [LM Studio](https://lmstudio.ai/) or [Ollama](https://ollama.com/)), it also supports cloud providers like Google Gemini for a hybrid workflow.
 
 ## 🌟 Features
