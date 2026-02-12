@@ -1,9 +1,9 @@
 # Local LLM Toolkit Roadmap (v0.1.x Archive)
 
-## 🚀 Current Status
-The project has evolved from a single HTML file into a suite of local, privacy-focused AI tools running on top of LM Studio.
+## 🚀 v0.1.x Achievements
+The project evolved from a single HTML file into a suite of local, privacy-focused AI tools running on top of LM Studio.
 
-### ✅ Completed
+### ✅ Completed Features
 - **Core Architecture**:
   - [x] Dashboard (`index.html`) as the central launchpad.
   - [x] Modular HTML file structure for individual tools.
@@ -12,8 +12,7 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] Global Settings page for Multi-Provider configuration.
   - [x] **Shared Assets**: Extracted common CSS (`style.css`) and JS (`utils.js`) to reduce code duplication.
   - [x] **Unified Layout**: Implemented `layout.js` for consistent Navigation Bar and Footer across all pages.
-  - [x] **Documentation**:
-    - [x] Created `docs/USER_GUIDE.md` and `docs/TOOLS.md`.
+  - [x] **Status Bar Refactor**: Centralized connection status and Target IP display logic in `layout.js`.
 - **System Prompt Generator**:
   - [x] Meta-Prompting logic to generate robust system instructions.
   - [x] Real-time Streaming support.
@@ -37,8 +36,9 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] `youtube_script_writer.html`: Tool to generate video scripts.
   - [x] `quiz_generator.html`: Tool to generate quizzes and flashcards.
   - [x] `persona_chat.html`: Tool to define and chat with specific characters.
+  - [x] `markdown_converter.html`: Tool to convert Markdown to HTML.
 
-## 🔌 Provider Integration
+### 🔌 Provider Integration (v0.1)
 - **Local Providers**:
   - [x] **LM Studio**: Native support via OpenAI-compatible endpoint.
   - [x] Update tools to switch base URL based on settings.
@@ -47,33 +47,19 @@ The project has evolved from a single HTML file into a suite of local, privacy-f
   - [x] Implement Gemini API adapter (`src/utils.js`).
   - [x] Refactor tools to use `utils.js` and support Gemini switching.
 
-### ☁️ Future API Expansion (Planned)
-Prioritized list of providers to add to `src/utils.js`:
-1. **OpenAI** (GPT-4o, o1) - *Standard Adapter*
-2. **Anthropic** (Claude 3.5 Sonnet)
-3. **Groq** (High-speed inference for Llama/Mixtral)
-4. **DeepSeek** (Native API)
-5. **Mistral AI** (La Plateforme)
-6. **xAI** (Grok)
-7. **Hugging Face** (Inference API)
-8. **Cohere** (Command R+)
-9. **Perplexity** (Online LLM)
-10. **Together AI** (Serverless Open Models)
+### 📚 Documentation (v0.1)
+- [x] `STYLE_GUIDE.md`
+- [x] `CONTRIBUTING.md`
+- [x] `docs/USER_GUIDE.md`
+- [x] `docs/TOOLS.md`
 
-## 🛠️ Planned Tools
-
-## 🔮 Future Enhancements
+### 🔮 Enhancements Delivered
 - [x] **File Persistence**: Ability to save generated `AGENT.md` and `SKILLS.md` files from the browser.
 - [x] **Stop Generation**: Button to cancel streaming responses.
-- **Settings Refactor**: As we add more providers, `settings.html` will need a tabbed interface or collapsible sections to manage API keys cleanly.
 - [x] **Text-to-Speech (TTS)**: Native browser integration to read generated text aloud via Web Speech API.
 - **UI Polish**:
   - [x] Add Icons to the Dashboard cards.
-  - Syntax highlighting for code outputs.
+  - [x] Dashboard Grid Optimization.
 
-## 🤖 Agentic Workflow
-- **Concept**: Use the Builders to define a workforce.
-- **Next Steps**:
-  1. Use `agent_builder.html` to define a "Coding Agent".
-  2. Use `skill_builder.html` to define a "Refactor Skill".
-  3. Build a simple orchestrator that reads these markdown files to execute tasks.
+## 📜 History
+- **v0.1.0 - v0.1.2**: Foundation, Tools, TTS, Settings, Documentation.

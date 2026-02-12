@@ -6,7 +6,7 @@
 
 const APP_CONFIG = {
     name: "Local LLM Toolkit",
-    version: "v0.1.2",
+    version: "v0.1.3",
     tools: [
         { name: "Chat Interface", link: "chat_interface.html", icon: "💬" },
         { name: "Prompt Generator", link: "prompt_generator.html", icon: "📝" },

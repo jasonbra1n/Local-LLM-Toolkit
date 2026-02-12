@@ -29,6 +29,7 @@ Ensure it links to `<link rel="stylesheet" href="style.css">`.
 - [ ] Is there a "Listen" button (for text-heavy outputs)?
 - [ ] Is there a "Save to File" button (if applicable)?
 - [ ] Does it link to `style.css`?
+- [ ] Have you added the tool to `docs/TOOLS.md`?
 
 ### 4. Update the Dashboard
 Add a new card to the grid in `src/index.html`:

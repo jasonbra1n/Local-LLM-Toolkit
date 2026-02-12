@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [v0.1.3] - 2026-02-11
+
+### Added
+- **Documentation**: Created `docs/USER_GUIDE.md` and `docs/TOOLS.md` for comprehensive user and tool reference.
+- **Roadmap**: Initialized v0.2.0 Roadmap focusing on UI polish and orchestration.
+
+### Changed
+- **Dashboard**: Optimized grid layout in `index.html` to fit more tools (increased max-width to 1200px, reduced card min-width).
+- **Docs**: Updated `CONTRIBUTING.md` to include the new documentation folder checklist.
+
 ## [v0.1.2] - 2026-02-11
 
 ### Added

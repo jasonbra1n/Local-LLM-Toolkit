@@ -13,7 +13,7 @@ This file contains the "Magic Spells" (Prompts) to guide Gemini through the deve
 
 ### 1. Start of Session (The "Quick Sync")
 *Use this to instantly load the project context. Note: Adjust paths if necessary.*
-> "Please read the project context files (`.gemini/CONTEXT.md`, `.gemini/PERSONA.md`, `ROADMAP.md`, `STYLE_GUIDE.md`, and `CHANGELOG.md`) to get in sync with the current state of the Local LLM Toolkit."
+> "Please read the project context files (`.gemini/CONTEXT.md`, `.gemini/PERSONA.md`, `ROADMAP.md`, `STYLE_GUIDE.md`, `CHANGELOG.md`, and `docs/TOOLS.md`) to get in sync with the current state of the Local LLM Toolkit."
 
 ### 2. Scaffold a New Tool
 > "I want to create a new tool called '[Tool Name]'. It should be a standalone HTML file in `src/`.
@@ -58,6 +58,6 @@ This file contains the "Magic Spells" (Prompts) to guide Gemini through the deve
 ## 📝 Playground Notes
 
 ### Current Focus
-- [ ] Creating 'Meeting Notes' tool.
-- [ ] Creating 'YouTube Script Writer' tool.
-- [ ] Preparing for Release v0.1.0.
+- [ ] **v0.2.0 UI Polish**: Syntax highlighting for code blocks.
+- [ ] **Orchestration**: Building a simple workflow engine.
+- [ ] **Theme Switcher**: Implementing Light/Dark mode toggle.

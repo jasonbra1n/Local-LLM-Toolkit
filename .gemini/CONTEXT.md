@@ -19,6 +19,7 @@ This file provides the deep technical context for AI assistants working on the L
 ## 📂 File Structure
 
 - **Root**: Documentation (`ROADMAP.md`, `STYLE_GUIDE.md`) and config.
+- **docs/**: User guides (`USER_GUIDE.md`) and tool references (`TOOLS.md`).
 - **src/**: Contains all executable tool files.
   - `index.html`: The Dashboard.
   - `settings.html`: Global configuration (Provider selection, API Keys).
