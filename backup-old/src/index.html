@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local LLM Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
+    <script src="layout.js"></script>
+    <style>
+        .container {
+            background-color: transparent;
+            box-shadow: none;
+            text-align: center;
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.2s, background-color 0.2s;
+            border: 1px solid #45475a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background-color: var(--hover-bg);
+            border-color: var(--accent-color);
+        }
+
+        .card h2 {
+            margin: 0 0 10px 0;
+            color: var(--accent-color);
+        }
+
+        .card p {
+            margin: 0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Local LLM Toolkit</h1>
+    <div class="grid">
+        <a href="chat_interface.html" class="card">
+            <h2>💬 Chat Interface</h2>
+            <p>General purpose chat with history and streaming.</p>
+        </a>
+        <a href="prompt_generator.html" class="card">
+            <h2>📝 Prompt Generator</h2>
+            <p>Create robust system prompts for any persona.</p>
+        </a>
+        <a href="idea_generator.html" class="card">
+            <h2>💡 Idea Generator</h2>
+            <p>Brainstorm concepts, topics, and ideas.</p>
+        </a>
+        <a href="summarizer.html" class="card">
+            <h2>📝 Summarizer</h2>
+            <p>Condense long text into bullets or summaries.</p>
+        </a>
+        <a href="story_architect.html" class="card">
+            <h2>📖 Story Architect</h2>
+            <p>Generate story bibles, characters, and outlines.</p>
+        </a>
+        <a href="novel_writer.html" class="card">
+            <h2>✍️ Novel Writer</h2>
+            <p>Write prose based on your Story Architect outline.</p>
+        </a>
+        <a href="email_polisher.html" class="card">
+            <h2>📧 Email Polisher</h2>
+            <p>Draft professional, empathetic, or stern emails.</p>
+        </a>
+        <a href="code_janitor.html" class="card">
+            <h2>🧹 Code Janitor</h2>
+            <p>Refactor spaghetti code into clean, readable code.</p>
+        </a>
+        <a href="regex_wizard.html" class="card">
+            <h2>🧙‍♂️ Regex Wizard</h2>
+            <p>Generate complex Regular Expressions from plain English.</p>
+        </a>
+        <a href="universal_translator.html" class="card">
+            <h2>🌐 Universal Translator</h2>
+            <p>Localize JSON files while preserving keys.</p>
+        </a>
+        <a href="agent_builder.html" class="card">
+            <h2>🤖 Agent Builder</h2>
+            <p>Define AI Agents and generate AGENT.md files.</p>
+        </a>
+        <a href="skill_builder.html" class="card">
+            <h2>🛠️ Skill Builder</h2>
+            <p>Create reusable Skills and generate SKILLS.md files.</p>
+        </a>
+        <a href="meeting_notes.html" class="card">
+            <h2>📅 Meeting Notes</h2>
+            <p>Turn raw transcripts into structured minutes & action items.</p>
+        </a>
+        <a href="visual_prompter.html" class="card">
+            <h2>🎨 Visual Prompter</h2>
+            <p>Generate detailed prompts for Midjourney, Stable Diffusion & Video.</p>
+        </a>
+        <a href="project_prompt_builder.html" class="card">
+            <h2>🏗️ Project Architect</h2>
+            <p>Generate a "Mega-Prompt" to build an entire project in one go.</p>
+        </a>
+        <a href="youtube_script_writer.html" class="card">
+            <h2>📹 YouTube Script</h2>
+            <p>Write engaging video scripts with hooks and visual cues.</p>
+        </a>
+        <a href="quiz_generator.html" class="card">
+            <h2>❓ Quiz Generator</h2>
+            <p>Create multiple-choice questions or flashcards from source text.</p>
+        </a>
+        <a href="persona_chat.html" class="card">
+            <h2>🎭 Persona Chat</h2>
+            <p>Define a character (e.g., Sherlock Holmes) and chat with them.</p>
+        </a>
+        <a href="markdown_converter.html" class="card">
+            <h2>📝 Markdown to HTML</h2>
+            <p>Convert Markdown to clean HTML for blogs.</p>
+        </a>
+    </div>
+</div>
+
+<script>
+    // Initialize connection check for the dashboard status bar
+    window.onload = async () => {
+        const config = getConfig();
+        if(document.getElementById('target-display')) document.getElementById('target-display').innerText = `Target: ${config.base}`;
+        await loadModels(config);
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local System Prompt Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
+    <script src="layout.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1>System Prompt Generator</h1>
+    
+    <div class="info-box">
+        <strong>ℹ️ Tip:</strong> Use this tool to create "System Prompts" (Personas). Describe the expert you need (e.g., "A strict Python tutor"), and the AI will write the detailed instructions for itself.
+    </div>
+
+    <label for="model-select">Select Local Model:</label>
+    <select id="model-select">
+        <option value="local-model" selected>Loading models...</option>
+    </select>
+
+    <label for="user-input">Describe the persona or system you need:</label>
+    <textarea id="user-input" rows="4" placeholder="e.g., I need a Python tutor that explains concepts simply to a 10 year old..."></textarea>
+
+    <button id="generate-btn" onclick="generatePrompt()">
+        <span id="btn-text">Generate System Prompt</span>
+        <div id="loader" class="loader"></div>
+    </button>
+    <button id="stop-btn" class="stop-btn" onclick="stopGeneration()">Stop Generation</button>
+
+    <div class="output-area" id="output-container" style="display:none;">
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <button class="speak-btn" onclick="speakOutput()" style="margin-right: 5px;">🔊 Listen</button>
+        <div id="thinking-container" style="display:none;">
+            <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
+            <div id="thinking-content" class="thinking-box"></div>
+        </div>
+        <label>Generated System Prompt:</label>
+        <textarea id="result-output" rows="10" readonly></textarea>
+    </div>
+</div>
+
+<script>
+    // This is the "Meta-Prompt" that tells your local LLM how to behave
+    const META_SYSTEM_PROMPT = `You are an expert Prompt Engineer. 
+    Your goal is to write highly effective, detailed, and robust "System Prompts" for Large Language Models based on user requests.
+    
+    Rules:
+    1. Analyze the user's request for a persona.
+    2. Create a specific, directive System Prompt that enforces that persona.
+    3. Include instructions on tone, style, constraints, and formatting.
+    4. Output ONLY the system prompt text. Do not include conversational filler like "Here is your prompt".`;
+
+    let abortController = null;
+
+    // Check connection on load
+    window.onload = async () => {
+        await loadModels(getConfig());
+    };
+
+    async function generatePrompt() {
+        const globalConfig = getConfig();
+        const input = document.getElementById('user-input').value;
+        const modelId = document.getElementById('model-select').value;
+        if (!input) return alert("Please enter a description first.");
+
+        const btn = document.getElementById('generate-btn');
+        const loader = document.getElementById('loader');
+        const btnText = document.getElementById('btn-text');
+        const outputContainer = document.getElementById('output-container');
+        const resultArea = document.getElementById('result-output');
+        const thinkingContainer = document.getElementById('thinking-container');
+        const thinkingContent = document.getElementById('thinking-content');
+        const stopBtn = document.getElementById('stop-btn');
+
+        // UI Loading State
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        loader.style.display = 'block';
+        outputContainer.style.display = 'none';
+        resultArea.value = "";
+        thinkingContent.textContent = "";
+        thinkingContainer.style.display = 'none';
+        stopBtn.style.display = 'block';
+
+        // Setup AbortController
+        abortController = new AbortController();
+
+        // Prepare Config
+        const config = {
+            ...globalConfig,
+            model: modelId // Override with UI selection (relevant for local models)
+        };
+
+        const messages = [
+            { role: "system", content: META_SYSTEM_PROMPT },
+            { role: "user", content: `Create a system prompt for this request: "${input}"` }
+        ];
+
+        let isThinking = false;
+
+        // Centralized Call
+        await generateText(messages, config,
+            (chunk) => { 
+                outputContainer.style.display = 'block';
+                
+                if (!isThinking && chunk.includes('<think>')) {
+                    isThinking = true;
+                    thinkingContainer.style.display = 'block';
+                    const parts = chunk.split('<think>');
+                    if (parts[0]) resultArea.value += parts[0];
+                    if (parts[1]) thinkingContent.textContent += parts[1];
+                } else if (isThinking && chunk.includes('</think>')) {
+                    isThinking = false;
+                    const parts = chunk.split('</think>');
+                    if (parts[0]) thinkingContent.textContent += parts[0];
+                    if (parts[1]) resultArea.value += parts[1];
+                } else if (isThinking) {
+                    thinkingContent.textContent += chunk;
+                    thinkingContent.scrollTop = thinkingContent.scrollHeight;
+                } else {
+                    resultArea.value += chunk;
+                    resultArea.scrollTop = resultArea.scrollHeight;
+                }
+            },
+            () => { 
+            btn.disabled = false;
+            btnText.style.display = 'inline';
+            loader.style.display = 'none';
+            stopBtn.style.display = 'none';
+            abortController = null;
+            },
+            (err) => {
+                if (err.name !== 'AbortError') alert(err.message);
+                btn.disabled = false; btnText.style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none';
+            },
+            abortController.signal
+        );
+    }
+
+    function stopGeneration() {
+        if (abortController) {
+            abortController.abort();
+            stopSpeech();
+        }
+    }
+
+    function toggleThinking() {
+        const header = document.querySelector('.thinking-header');
+        const content = document.getElementById('thinking-content');
+        header.classList.toggle('collapsed');
+        content.style.display = header.classList.contains('collapsed') ? 'none' : 'block';
+    }
+
+    function copyToClipboard() {
+        const copyText = document.getElementById("result-output");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); 
+        navigator.clipboard.writeText(copyText.value);
+        alert("Copied to clipboard!");
+    }
+    function speakOutput() {
+        const btn = document.querySelector('.speak-btn');
+        if (btn.innerText.includes("Stop")) {
+            stopSpeech();
+            btn.innerText = "🔊 Listen";
+            return;
+        }
+        const text = document.getElementById('result-output').value;
+        if(!text) return;
+        btn.innerText = "⏹️ Stop";
+        speakText(text, () => btn.innerText = "🔊 Listen");
+    }
+</script>
+
+</body>
+</html>

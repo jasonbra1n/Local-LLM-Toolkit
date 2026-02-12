@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Story Architect</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
+    <script src="layout.js"></script>
+    <style>
+        :root {
+            --accent-color: #f9e2af; /* Gold for storytelling */
+            --button-hover: #fdf6e3;
+        }
+
+        .container {
+            max-width: 900px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Story Architect</h1>
+    
+    <div class="info-box">
+        <strong>ℹ️ How to use:</strong> Enter a core premise (e.g., "A time-traveling detective"). The Architect will expand this into a full Story Bible with characters, plot points, and a chapter outline.
+    </div>
+
+    <div class="input-group">
+        <label>Select Model:</label>
+        <select id="model-select"><option value="local-model">Loading models...</option></select>
+    </div>
+
+    <div class="input-group">
+        <label>Core Premise / Idea:</label>
+        <textarea id="premise" rows="3" placeholder="e.g. A detective discovers that the murderer is a time traveler trying to prevent a future war."></textarea>
+    </div>
+
+    <div class="row input-group">
+        <div class="col">
+            <label>Genre & Tone:</label>
+            <input type="text" id="genre" placeholder="e.g. Cyberpunk Noir, Gritty">
+        </div>
+        <div class="col">
+            <label>Approx Word Count:</label>
+            <input type="text" id="wordcount" placeholder="e.g. 50,000 words">
+        </div>
+    </div>
+
+    <button id="generate-btn" onclick="generateStory()">
+        <span id="btn-text">Generate Story Bible</span>
+        <div id="loader" class="loader"></div>
+    </button>
+    <button id="stop-btn" class="stop-btn" onclick="stopGeneration()">Stop Generation</button>
+
+    <div class="output-area" id="output-container" style="display:none;">
+        <button class="save-btn" onclick="saveToFile()">Save Bible</button>
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <button class="speak-btn" onclick="speakOutput()" style="margin-right: 5px;">🔊 Listen</button>
+        <div id="thinking-container" style="display:none;">
+            <div class="thinking-header" onclick="toggleThinking()">Architect's Reasoning</div>
+            <div id="thinking-content" class="thinking-box"></div>
+        </div>
+        <label>Story Bible (Characters, Plot, Outline):</label>
+        <textarea id="result-output" rows="20"></textarea>
+    </div>
+</div>
+
+<script>
+    const ARCHITECT_PROMPT = `You are a world-class Novelist and Story Editor. 
+    Your goal is to take a user's premise and expand it into a comprehensive "Story Bible".
+    
+    You must output a structured plan including:
+    1. **Title Ideas**: 3 catchy options.
+    2. **Logline**: A one-sentence summary.
+    3. **Character Profiles**: For Protagonist, Antagonist, and key supporting characters (Name, Role, Motivation, Flaw).
+    4. **Detailed Chapter Outline**: A breakdown of at least 10-15 chapters. For each chapter, describe the key event and the "Scene Goal".
+    5. **Ending**: The desired outcome and resolution.
+    
+    Format the output in clean Markdown.`;
+
+    let abortController = null;
+
+    window.onload = async () => {
+        await loadModels(getConfig());
+    };
+
+    async function generateStory() {
+        const globalConfig = getConfig();
+        const premise = document.getElementById('premise').value;
+        const genre = document.getElementById('genre').value;
+        const wc = document.getElementById('wordcount').value;
+        const model = document.getElementById('model-select').value;
+
+        if (!premise) return alert("Please enter a premise.");
+
+        const btn = document.getElementById('generate-btn');
+        const loader = document.getElementById('loader');
+        const out = document.getElementById('output-container');
+        const thinkingContainer = document.getElementById('thinking-container');
+        const thinkingContent = document.getElementById('thinking-content');
+        const resultArea = document.getElementById('result-output');
+        const stopBtn = document.getElementById('stop-btn');
+
+        // UI Loading State
+        btn.disabled = true; document.getElementById('btn-text').style.display = 'none'; loader.style.display = 'block';
+        stopBtn.style.display = 'block';
+        resultArea.value = "";
+        thinkingContent.textContent = "";
+        thinkingContainer.style.display = 'none';
+        out.style.display = 'block';
+
+        abortController = new AbortController();
+
+        const userPrompt = `Premise: ${premise}\nGenre/Tone: ${genre}\nTarget Length: ${wc}\n\nPlease generate the Story Bible now.`;
+        const messages = [
+            { role: "system", content: ARCHITECT_PROMPT },
+            { role: "user", content: userPrompt }
+        ];
+        const config = {
+            ...globalConfig,
+            model: model
+        };
+
+        let isThinking = false;
+
+        await generateText(messages, config,
+            (content) => {
+                if (!isThinking && content.includes('<think>')) {
+                    isThinking = true;
+                    thinkingContainer.style.display = 'block';
+                    const parts = content.split('<think>');
+                    if(parts[0]) resultArea.value += parts[0];
+                    if(parts[1]) thinkingContent.textContent += parts[1];
+                } else if (isThinking && content.includes('</think>')) {
+                    isThinking = false;
+                    const parts = content.split('</think>');
+                    if(parts[0]) thinkingContent.textContent += parts[0];
+                    if(parts[1]) resultArea.value += parts[1];
+                } else if (isThinking) {
+                    thinkingContent.textContent += content;
+                    thinkingContent.scrollTop = thinkingContent.scrollHeight;
+                } else {
+                    resultArea.value += content;
+                    resultArea.scrollTop = resultArea.scrollHeight;
+                }
+            },
+            () => { // onComplete
+                btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none'; abortController = null;
+            },
+            (err) => { // onError
+                if (err.name !== 'AbortError') alert("Error: " + err.message);
+                else resultArea.value += "\n\n[Generation stopped by user]";
+                btn.disabled = false; document.getElementById('btn-text').style.display = 'inline'; loader.style.display = 'none'; stopBtn.style.display = 'none';
+            },
+            abortController.signal
+        );
+    }
+
+    function stopGeneration() {
+        if (abortController) {
+            abortController.abort();
+            stopSpeech();
+        }
+    }
+
+    function toggleThinking() {
+        const header = document.querySelector('.thinking-header');
+        const content = document.getElementById('thinking-content');
+        header.classList.toggle('collapsed');
+        content.style.display = header.classList.contains('collapsed') ? 'none' : 'block';
+    }
+
+    function saveToFile() {
+        const content = document.getElementById('result-output').value;
+        if (!content) return alert("Nothing to save!");
+
+        const premise = document.getElementById('premise').value;
+        // Sanitize filename
+        const safeName = premise.split(' ').slice(0, 5).join('_').replace(/[^a-zA-Z0-9_]/g, '') || "Story_Bible";
+        const filename = `${safeName}_BIBLE.md`;
+
+        const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    }
+
+    function copyToClipboard() {
+        const copyText = document.getElementById("result-output");
+        copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied!");
+    }
+    function speakOutput() {
+        const btn = document.querySelector('.speak-btn');
+        if (btn.innerText.includes("Stop")) {
+            stopSpeech();
+            btn.innerText = "🔊 Listen";
+            return;
+        }
+        const text = document.getElementById('result-output').value;
+        if(!text) return;
+        btn.innerText = "⏹️ Stop";
+        speakText(text, () => btn.innerText = "🔊 Listen");
+    }
+</script>
+</body>
+</html>
