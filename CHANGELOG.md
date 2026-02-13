@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [v0.1.3] - 2026-02-11
+## [v0.1.3] - 2026-02-12
 
 ### Added
 - **Documentation**: Created `docs/USER_GUIDE.md` and `docs/TOOLS.md` for comprehensive user and tool reference.
@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - **Dashboard**: Optimized grid layout in `index.html` to fit more tools (increased max-width to 1200px, reduced card min-width).
 - **Docs**: Updated `CONTRIBUTING.md` to include the new documentation folder checklist.
+
+### Fixed
+- **UI**: Added scrollbar to Navigation Dropdown to handle long lists of tools on smaller screens.
 
 ## [v0.1.2] - 2026-02-11
 
