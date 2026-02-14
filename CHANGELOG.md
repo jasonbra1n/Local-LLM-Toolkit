@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Tools Gallery**: Created `src/tools.html`, a dedicated page listing all tools with descriptions.
+- **Layout**: Added tool descriptions to `APP_CONFIG` in `src/layout.js`.
+
+### Changed
+- **Dashboard**: Refactored `src/index.html` to dynamically generate the tool grid using `APP_CONFIG`, creating a single source of truth for tool definitions.
+- **Navigation**: Updated the "Tools" link in the Navbar to point directly to the new Gallery page (`tools.html`).
+
 ## [v0.1.4] - 2026-02-14
 
 ### Added
