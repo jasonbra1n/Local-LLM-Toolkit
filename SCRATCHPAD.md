@@ -16,6 +16,16 @@
 - [ ] **RAG (Chat with Docs)**: Investigate browser-based vector stores (e.g., Transformers.js or simple cosine similarity).
 - [ ] **Voice Mode**: A hands-free, voice-only interface.
 
+### 🔗 Integration (v0.1.5)
+- [x] **Prompt Generator**: Added "Set as Global System Prompt" button.
+- [x] **Story Architect**: Now respects the Global System Prompt (Persona).
+- [x] **Novel Writer**: Now respects the Global System Prompt (Persona).
+- [x] **Persona Chat**: Added "Load Default" button to pull from Global Settings.
+
+### ⏳ Potential Integrations (Backlog)
+- [ ] **Email Polisher**: Respect Global Persona (e.g., "Corporate Executive").
+- [ ] **YouTube Script Writer**: Respect Global Persona (e.g., "High Energy Reviewer").
+
 ### ✅ Completed (v0.1.x)
 - [x] **TTS Overhaul**: Standardized Play/Pause/Stop across all tools.
 - [x] **Theme Switcher**: Light/Dark mode.

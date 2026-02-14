@@ -33,6 +33,7 @@
 
     <div class="output-area" id="output-container" style="display:none;">
         <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <button class="save-btn" onclick="setAsGlobal()" style="margin-right: 5px;">💾 Set as Global</button>
         <button id="speak-btn" class="speak-btn" style="margin-right: 5px;">🔊 Listen</button>
         <button id="tts-stop-btn" class="speak-btn" style="margin-right: 5px; display:none;">⏹️ Stop</button>
         <div id="thinking-container" style="display:none;">
@@ -167,6 +168,13 @@
         copyText.setSelectionRange(0, 99999); 
         navigator.clipboard.writeText(copyText.value);
         alert("Copied to clipboard!");
+    }
+
+    function setAsGlobal() {
+        const text = document.getElementById("result-output").value;
+        if (!text) return alert("No prompt to save!");
+        localStorage.setItem('default_system_prompt', text);
+        alert("Saved as Global System Prompt!\n\nThis persona will now be used by the Chat Interface, Story Architect, and Novel Writer.");
     }
 </script>
 

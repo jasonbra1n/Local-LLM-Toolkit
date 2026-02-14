@@ -115,8 +115,12 @@
         
         abortController = new AbortController();
 
+        // Combine the Tool's Structural Prompt with the User's Global Persona
+        const globalPersona = localStorage.getItem('default_system_prompt') || "";
+        const systemMessage = globalPersona ? `${WRITER_PROMPT}\n\nAdditional Persona/Style Context:\n${globalPersona}` : WRITER_PROMPT;
+
         const userMessage = `Story Context:\n${context}\n\nTask: Write ${chapter}\nStyle: ${style || "Standard"}`;
-        const messages = [{ role: "system", content: WRITER_PROMPT }, { role: "user", content: userMessage }];
+        const messages = [{ role: "system", content: systemMessage }, { role: "user", content: userMessage }];
         
         const config = {
             ...globalConfig,

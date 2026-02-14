@@ -61,7 +61,8 @@
         <textarea id="char-prompt" rows="3" placeholder="You are Sherlock Holmes. You are observant, logical, and slightly arrogant..."></textarea>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px;">
+        <button onclick="loadDefaultPersona()" style="width: auto; padding: 8px 15px; font-size: 0.9rem; background-color: #45475a;">📂 Load Default</button>
         <button onclick="resetPersona()" style="width: auto; padding: 8px 15px; font-size: 0.9rem; background-color: #45475a;">🔄 Reset / Apply Persona</button>
     </div>
 
@@ -115,6 +116,15 @@
         history.appendChild(div);
         history.scrollTop = history.scrollHeight;
         return div;
+    }
+
+    function loadDefaultPersona() {
+        const defaultPrompt = localStorage.getItem('default_system_prompt');
+        if (defaultPrompt) {
+            document.getElementById('char-prompt').value = defaultPrompt;
+        } else {
+            alert("No Global System Prompt found in Settings.");
+        }
     }
 
     function resetPersona() {

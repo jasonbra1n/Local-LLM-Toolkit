@@ -119,9 +119,13 @@
 
         abortController = new AbortController();
 
+        // Combine the Tool's Structural Prompt with the User's Global Persona
+        const globalPersona = localStorage.getItem('default_system_prompt') || "";
+        const systemMessage = globalPersona ? `${ARCHITECT_PROMPT}\n\nAdditional Persona/Style Context:\n${globalPersona}` : ARCHITECT_PROMPT;
+
         const userPrompt = `Premise: ${premise}\nGenre/Tone: ${genre}\nTarget Length: ${wc}\n\nPlease generate the Story Bible now.`;
         const messages = [
-            { role: "system", content: ARCHITECT_PROMPT },
+            { role: "system", content: systemMessage },
             { role: "user", content: userPrompt }
         ];
         const config = {

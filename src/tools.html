@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Gallery</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
+    <script src="layout.js"></script>
+    <style>
+        .container {
+            background-color: transparent;
+            box-shadow: none;
+            text-align: center;
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.2s, background-color 0.2s;
+            border: 1px solid #45475a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 140px;
+            justify-content: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background-color: var(--hover-bg);
+            border-color: var(--accent-color);
+        }
+
+        .card h2 {
+            margin: 0 0 10px 0;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        .card p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Tools Gallery</h1>
+    <div class="grid" id="tools-grid"></div>
+</div>
+
+<script>
+    window.onload = async () => {
+        const grid = document.getElementById('tools-grid');
+        if (typeof APP_CONFIG !== 'undefined') {
+            grid.innerHTML = APP_CONFIG.tools.map(tool => `
+                <a href="${tool.link}" class="card">
+                    <h2>${tool.icon} ${tool.name}</h2>
+                    <p>${tool.desc || "Open tool"}</p> 
+                </a>
+            `).join('');
+        }
+
+        const config = getConfig();
+        if(document.getElementById('target-display')) document.getElementById('target-display').innerText = `Target: ${config.base}`;
+        await loadModels(config);
+    };
+</script>
+</body>
+</html>

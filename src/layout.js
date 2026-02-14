@@ -8,25 +8,25 @@ const APP_CONFIG = {
     name: "Local LLM Toolkit",
     version: "v0.1.4",
     tools: [
-        { name: "Chat Interface", link: "chat_interface.html", icon: "💬" },
-        { name: "Prompt Generator", link: "prompt_generator.html", icon: "📝" },
-        { name: "Idea Generator", link: "idea_generator.html", icon: "💡" },
-        { name: "Summarizer", link: "summarizer.html", icon: "📝" },
-        { name: "Story Architect", link: "story_architect.html", icon: "📖" },
-        { name: "Novel Writer", link: "novel_writer.html", icon: "✍️" },
-        { name: "Email Polisher", link: "email_polisher.html", icon: "📧" },
-        { name: "Code Janitor", link: "code_janitor.html", icon: "🧹" },
-        { name: "Regex Wizard", link: "regex_wizard.html", icon: "🧙‍♂️" },
-        { name: "Universal Translator", link: "universal_translator.html", icon: "🌐" },
-        { name: "Agent Builder", link: "agent_builder.html", icon: "🤖" },
-        { name: "Skill Builder", link: "skill_builder.html", icon: "🛠️" },
-        { name: "Meeting Notes", link: "meeting_notes.html", icon: "📅" },
-        { name: "Visual Prompter", link: "visual_prompter.html", icon: "🎨" },
-        { name: "Project Architect", link: "project_prompt_builder.html", icon: "🏗️" },
-        { name: "YouTube Script", link: "youtube_script_writer.html", icon: "📹" },
-        { name: "Quiz Generator", link: "quiz_generator.html", icon: "❓" },
-        { name: "Persona Chat", link: "persona_chat.html", icon: "🎭" },
-        { name: "Markdown to HTML", link: "markdown_converter.html", icon: "📝" }
+        { name: "Chat Interface", link: "chat_interface.html", icon: "💬", desc: "General purpose chat with history and streaming." },
+        { name: "Prompt Generator", link: "prompt_generator.html", icon: "📝", desc: "Create robust system prompts for any persona." },
+        { name: "Idea Generator", link: "idea_generator.html", icon: "💡", desc: "Brainstorm concepts, topics, and ideas." },
+        { name: "Summarizer", link: "summarizer.html", icon: "📝", desc: "Condense long text into bullets or summaries." },
+        { name: "Story Architect", link: "story_architect.html", icon: "📖", desc: "Generate story bibles, characters, and outlines." },
+        { name: "Novel Writer", link: "novel_writer.html", icon: "✍️", desc: "Write prose based on your Story Architect outline." },
+        { name: "Email Polisher", link: "email_polisher.html", icon: "📧", desc: "Draft professional, empathetic, or stern emails." },
+        { name: "Code Janitor", link: "code_janitor.html", icon: "🧹", desc: "Refactor spaghetti code into clean, readable code." },
+        { name: "Regex Wizard", link: "regex_wizard.html", icon: "🧙‍♂️", desc: "Generate complex Regular Expressions from plain English." },
+        { name: "Universal Translator", link: "universal_translator.html", icon: "🌐", desc: "Localize JSON files while preserving keys." },
+        { name: "Agent Builder", link: "agent_builder.html", icon: "🤖", desc: "Define AI Agents and generate AGENT.md files." },
+        { name: "Skill Builder", link: "skill_builder.html", icon: "🛠️", desc: "Create reusable Skills and generate SKILLS.md files." },
+        { name: "Meeting Notes", link: "meeting_notes.html", icon: "📅", desc: "Turn raw transcripts into structured minutes & action items." },
+        { name: "Visual Prompter", link: "visual_prompter.html", icon: "🎨", desc: "Generate detailed prompts for Midjourney, Stable Diffusion & Video." },
+        { name: "Project Architect", link: "project_prompt_builder.html", icon: "🏗️", desc: "Generate a 'Mega-Prompt' to build an entire project in one go." },
+        { name: "YouTube Script", link: "youtube_script_writer.html", icon: "📹", desc: "Write engaging video scripts with hooks and visual cues." },
+        { name: "Quiz Generator", link: "quiz_generator.html", icon: "❓", desc: "Create multiple-choice questions or flashcards from source text." },
+        { name: "Persona Chat", link: "persona_chat.html", icon: "🎭", desc: "Define a character (e.g., Sherlock Holmes) and chat with them." },
+        { name: "Markdown to HTML", link: "markdown_converter.html", icon: "📝", desc: "Convert Markdown to clean HTML for blogs." }
     ]
 };
 
@@ -41,8 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <ul class="nav-links" id="nav-menu">
                 <li><a href="index.html">Dashboard</a></li>
                 <li class="dropdown" id="tools-dropdown">
-                    <a href="#" class="dropbtn" id="tools-toggle">Tools ▾</a>
+                    <a href="tools.html" class="dropbtn" id="tools-toggle">Tools ▾</a>
                     <div class="dropdown-content">
+                        <a href="tools.html" style="font-weight: bold; border-bottom: 2px solid rgba(255,255,255,0.1);">📚 View Gallery</a>
                         ${APP_CONFIG.tools.map(t => `<a href="${t.link}">${t.icon} ${t.name}</a>`).join('')}
                     </div>
                 </li>
