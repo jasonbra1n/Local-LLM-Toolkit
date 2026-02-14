@@ -19,6 +19,13 @@ Prioritized list of providers to add to `src/utils.js`:
 ### 📚 Documentation
 - [ ] **Developer Guide**: How to build plugins or extensions.
 
+## 💡 Future Tool Concepts (Backlog)
+- **📄 Document Chatter (RAG)**: Upload a PDF/Text file and chat with it using local embeddings.
+- **⚔️ Model Arena**: Run the same prompt against two different local models side-by-side to compare performance.
+- **🗣️ Voice Mode**: A dedicated hands-free interface for voice-to-voice conversation.
+- **⛏️ Data Extractor**: Paste unstructured text and a JSON schema to extract structured data.
+- **🗄️ Prompt Library**: A manager to save, tag, and organize your favorite system prompts.
+
 ## 🤖 Agentic Workflow
 - **Concept**: Use the Builders to define a workforce.
 - **Next Steps**:

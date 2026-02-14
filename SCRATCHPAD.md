@@ -1,62 +1,22 @@
 # 📝 Scratchpad
 
-## 🎯 Current Focus: Refactoring Remaining Tools
+## 🎯 Current Focus: v0.2.0 - Orchestration & Polish
 
-### 🏗️ Architecture Refactor (Centralized Router)
-The following tools have been updated to use `generateText()` and `getConfig()`:
-- [ ] `meeting_notes.html` (New)
-- [x] `prompt_generator.html`
-- [x] `summarizer.html`
-- [x] `story_architect.html`
-- [x] `agent_builder.html`
-- [x] `skill_builder.html`
-- [x] `chat_interface.html`
+###  UI Polish
+- [ ] **Syntax Highlighting**: Implement Prism.js or similar for code blocks in `chat_interface.html` and `code_janitor.html`.
+- [ ] **Markdown Rendering**: Improve markdown parsing in chat bubbles (tables, lists).
 
-### ⏳ Pending Refactor & Cleanup
-- [x] `novel_writer.html`
-- [x] `code_janitor.html`
-- [x] `email_polisher.html`
-- [x] `regex_wizard.html`
-- [x] `universal_translator.html`
-- [x] **Bug Fix**: Centralized `Target: Loading...` update in `utils.js` so all tools display the correct IP.
-- [x] **HTML Cleanup**: Remove hardcoded `<div class="status-bar">` from:
-    - [x] `prompt_generator.html`
-    - [x] `idea_generator.html`
-    - [x] `summarizer.html`
-    - [x] `story_architect.html`
-    - [x] `chat_interface.html`
-    - [x] `markdown_converter.html`
-    - [x] `novel_writer.html`
-    - [x] `email_polisher.html`
-    - [x] `code_janitor.html`
-    - [x] `regex_wizard.html`
-    - [x] `universal_translator.html`
-    - [x] `agent_builder.html`
-    - [x] `skill_builder.html`
-    - [x] `meeting_notes.html`
-    - [x] `visual_prompter.html`
-    - [x] `project_prompt_builder.html`
-    - [x] `youtube_script_writer.html`
-    - [x] `quiz_generator.html`
-    - [x] `persona_chat.html`
+### 🤖 Orchestration (The "Manager")
+- [ ] **Orchestrator Tool**: Create `orchestrator.html`.
+    - Goal: Chain multiple agents/tools together.
+    - Input: A complex task (e.g., "Write a blog post and generate a social media caption").
+    - Logic: Parse task -> Call "Idea Generator" -> Call "Novel Writer" -> Call "Summarizer".
 
-### 🔊 Audio Features
-- [x] **Text-to-Speech**: Implement `speakText()` in `utils.js` using the Web Speech API.
-- [x] **Controls**: Add `pauseSpeech()` and `resumeSpeech()` to `utils.js`.
+### 🔮 Future Explorations
+- [ ] **RAG (Chat with Docs)**: Investigate browser-based vector stores (e.g., Transformers.js or simple cosine similarity).
+- [ ] **Voice Mode**: A hands-free, voice-only interface.
 
-#### 🎧 TTS UI Standardization (Play/Pause/Stop)
-Update all tools to use the new `toggleSpeech()` and `stopSpeechUI()` pattern.
-
-- [x] `chat_interface.html`
-- [x] `novel_writer.html`
-- [x] `summarizer.html`
-- [x] `story_architect.html`
-- [x] `prompt_generator.html`
-- [x] `idea_generator.html`
-- [x] `email_polisher.html`
-- [x] `meeting_notes.html`
-- [x] `visual_prompter.html`
-- [x] `project_prompt_builder.html`
-- [x] `youtube_script_writer.html`
-- [x] `quiz_generator.html`
-- [x] `persona_chat.html`
+### ✅ Completed (v0.1.x)
+- [x] **TTS Overhaul**: Standardized Play/Pause/Stop across all tools.
+- [x] **Theme Switcher**: Light/Dark mode.
+- [x] **Refactor**: All tools using centralized `utils.js`.
