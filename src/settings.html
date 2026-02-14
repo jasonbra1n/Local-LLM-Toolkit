@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings</title>
     <link rel="stylesheet" href="style.css">
+    <script src="utils.js"></script>
     <script src="layout.js"></script>
     <style>
         .container {
@@ -135,19 +136,50 @@
         <label>Default System Prompt (Chat Interface):</label>
         <textarea id="system-prompt" rows="3" placeholder="You are a helpful AI assistant."></textarea>
 
-        <label>Text-to-Speech Voice:</label>
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <select id="voice-select" style="flex: 1; margin-bottom: 0;">
-                <option value="">Default / Browser Choice</option>
-            </select>
-            <button onclick="testVoice()" style="width: auto; padding: 10px;">🔊 Test</button>
+        <h3>Text-to-Speech (TTS)</h3>
+        <label>TTS Provider:</label>
+        <select id="tts-provider" onchange="updateTTSUI()" style="margin-bottom: 20px;">
+            <option value="browser">Browser Native (Free, Offline)</option>
+            <option value="openai">OpenAI (High Quality, Paid)</option>
+            <option value="local">Local Server (AllTalk/Piper)</option>
+        </select>
+
+        <!-- Browser Config -->
+        <div id="tts-browser-config">
+            <label>Voice:</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <select id="voice-select" style="flex: 1; margin-bottom: 0;">
+                    <option value="">Default / Browser Choice</option>
+                </select>
+                <button onclick="testVoice()" style="width: auto; padding: 10px;">🔊 Test</button>
+            </div>
+        </div>
+
+        <!-- External Config -->
+        <div id="tts-external-config" style="display:none;">
+            <label>API Endpoint:</label>
+            <input type="text" id="tts-url" placeholder="https://api.openai.com/v1/audio/speech">
+            <label>API Key (Optional for Local):</label>
+            <input type="password" id="tts-key" placeholder="sk-...">
+            <div class="row">
+                <div class="col">
+                    <label>Model ID:</label>
+                    <input type="text" id="tts-model" placeholder="tts-1">
+                </div>
+                <div class="col">
+                    <label>Voice ID:</label>
+                    <input type="text" id="tts-ext-voice" placeholder="alloy">
+                </div>
+            </div>
+            <span class="note">OpenAI Voices: alloy, echo, fable, onyx, nova, shimmer</span>
+            <button onclick="testVoice()" style="width: 100%; margin-top: 10px;">🔊 Test External TTS</button>
         </div>
     </div>
 
     <button onclick="saveSettings()" style="margin-top: 20px;">Save Settings</button>
 </div>
 <script>
-    window.onload = () => {
+    window.onload = async () => {
         // Load Provider
         const provider = localStorage.getItem('active_provider') || 'lm-studio';
         document.getElementById('provider-select').value = provider;
@@ -175,8 +207,21 @@
 
         document.getElementById('temp-val').innerText = document.getElementById('global-temp').value;
 
+        // TTS
+        document.getElementById('tts-provider').value = localStorage.getItem('tts_provider') || 'browser';
+        document.getElementById('tts-url').value = localStorage.getItem('tts_url') || "";
+        document.getElementById('tts-key').value = localStorage.getItem('tts_api_key') || "";
+        document.getElementById('tts-model').value = localStorage.getItem('tts_model') || "tts-1";
+        document.getElementById('tts-ext-voice').value = localStorage.getItem('tts_voice') || "alloy";
+
         updateProviderUI();
+        updateTTSUI();
         fetchLocalModels(); // Auto-fetch on load
+
+        // Initialize Status Bar
+        const config = getConfig();
+        if(document.getElementById('target-display')) document.getElementById('target-display').innerText = `Target: ${config.base}`;
+        await loadModels(config);
 
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = loadVoices;
@@ -198,6 +243,24 @@
         const provider = document.getElementById('provider-select').value;
         document.querySelectorAll('.provider-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`${provider}-config`).classList.add('active');
+    }
+
+    function updateTTSUI() {
+        const provider = document.getElementById('tts-provider').value;
+        if (provider === 'browser') {
+            document.getElementById('tts-browser-config').style.display = 'block';
+            document.getElementById('tts-external-config').style.display = 'none';
+        } else {
+            document.getElementById('tts-browser-config').style.display = 'none';
+            document.getElementById('tts-external-config').style.display = 'block';
+            
+            const urlInput = document.getElementById('tts-url');
+            if (provider === 'openai' && !urlInput.value) {
+                urlInput.value = "https://api.openai.com/v1/audio/speech";
+            } else if (provider === 'local' && !urlInput.value) {
+                urlInput.value = "http://127.0.0.1:8000/v1/audio/speech";
+            }
+        }
     }
 
     async function fetchLocalModels() {
@@ -288,19 +351,54 @@
         localStorage.setItem('mistral_url', document.getElementById('mistral-url').value);
 
         localStorage.setItem('preferred_voice_name', document.getElementById('voice-select').value);
+        
+        // TTS
+        localStorage.setItem('tts_provider', document.getElementById('tts-provider').value);
+        localStorage.setItem('tts_url', document.getElementById('tts-url').value.trim());
+        localStorage.setItem('tts_api_key', document.getElementById('tts-key').value.trim());
+        localStorage.setItem('tts_model', document.getElementById('tts-model').value.trim());
+        localStorage.setItem('tts_voice', document.getElementById('tts-ext-voice').value.trim());
 
         alert("Settings Saved!");
     }
 
-    function testVoice() {
-        if (!('speechSynthesis' in window)) return alert("TTS not supported.");
+    async function testVoice() {
+        const provider = document.getElementById('tts-provider').value;
         const text = "This is a test of the selected voice.";
-        const utterance = new SpeechSynthesisUtterance(text);
-        const voiceName = document.getElementById('voice-select').value;
-        const voices = window.speechSynthesis.getVoices();
-        const selectedVoice = voices.find(v => v.name === voiceName);
-        if (selectedVoice) utterance.voice = selectedVoice;
-        window.speechSynthesis.speak(utterance);
+        
+        if (provider === 'browser') {
+            if (!('speechSynthesis' in window)) return alert("TTS not supported.");
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voiceName = document.getElementById('voice-select').value;
+            const voices = window.speechSynthesis.getVoices();
+            const selectedVoice = voices.find(v => v.name === voiceName);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            window.speechSynthesis.speak(utterance);
+        } else {
+            const url = document.getElementById('tts-url').value;
+            const key = document.getElementById('tts-key').value;
+            const model = document.getElementById('tts-model').value;
+            const voice = document.getElementById('tts-ext-voice').value;
+            
+            try {
+                const headers = { "Content-Type": "application/json" };
+                if (key) headers["Authorization"] = `Bearer ${key}`;
+                
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify({ model, input: text, voice })
+                });
+                
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                
+                const blob = await response.blob();
+                const audio = new Audio(URL.createObjectURL(blob));
+                audio.play();
+            } catch (e) {
+                alert("TTS Test Failed: " + e.message);
+            }
+        }
     }
 </script>
 </body>

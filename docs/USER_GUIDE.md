@@ -57,7 +57,10 @@ For reasoning models (like *DeepSeek-R1*), the toolkit detects `<think>` tags an
 ### 3. Text-to-Speech (TTS) 🔊
 Click the **Listen** button on text-heavy tools (like Novel Writer or Meeting Notes) to hear the output read aloud.
 *   **Control**: Click "Stop" to silence the audio immediately.
-*   **Voices**: Configure the voice in Settings.
+*   **Configuration**: Go to **Settings > General** to choose your provider:
+    *   **Browser Native**: Free, offline, uses your OS voices.
+    *   **OpenAI**: High-quality neural voices (requires API Key).
+    *   **Local Server**: Connect to local TTS engines like AllTalk or Piper.
 
 ### 4. File Persistence
 *   **Save to File**: Many tools (Agent Builder, Story Architect) allow you to save the output directly as a Markdown (`.md`) file.

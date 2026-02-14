@@ -61,5 +61,11 @@ The project evolved from a single HTML file into a suite of local, privacy-focus
   - [x] Add Icons to the Dashboard cards.
   - [x] Dashboard Grid Optimization.
 
+### 🔊 Audio & UI (v0.1.4)
+- [x] **External TTS**: Support for OpenAI and Local TTS servers.
+- [x] **Playback Control**: Play/Pause/Stop functionality for TTS.
+- [x] **Theme Switcher**: Light/Dark mode toggle.
+- [x] **UI Polish**: Basic code block styling.
+
 ## 📜 History
 - **v0.1.0 - v0.1.2**: Foundation, Tools, TTS, Settings, Documentation.

@@ -55,7 +55,8 @@
     <!-- Output -->
     <div class="output-area" id="output-container" style="display:none;">
         <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
-        <button class="speak-btn" onclick="speakOutput()" style="margin-right: 5px;">🔊 Listen</button>
+        <button id="speak-btn" class="speak-btn" style="margin-right: 5px;">🔊 Listen</button>
+        <button id="tts-stop-btn" class="speak-btn" style="margin-right: 5px; display:none;">⏹️ Stop</button>
         <div id="thinking-container" style="display:none;">
             <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
             <div id="thinking-content" class="thinking-box"></div>
@@ -78,10 +79,15 @@
     5. Output ONLY the rewritten email body (and subject line if applicable). Do not include conversational filler.`;
 
     let abortController = null;
+    let tts = null;
 
     // Window Load (Connection Check)
     window.onload = async () => {
         await loadModels(getConfig());
+        tts = new TTSController({
+            getText: () => document.getElementById('result-output').value,
+            labels: { start: "🔊 Listen", pause: "⏸️ Pause", resume: "▶️ Resume" }
+        });
     };
 
     // Generate Function
@@ -143,7 +149,7 @@
 
     function stopGeneration() { 
         if (abortController) abortController.abort(); 
-        stopSpeech();
+        if (tts) tts.stop();
     }
     function toggleThinking() {
         const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content');
@@ -152,18 +158,6 @@
     function copyToClipboard() {
         const copyText = document.getElementById("result-output");
         copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied!");
-    }
-    function speakOutput() {
-        const btn = document.querySelector('.speak-btn');
-        if (btn.innerText.includes("Stop")) {
-            stopSpeech();
-            btn.innerText = "🔊 Listen";
-            return;
-        }
-        const text = document.getElementById('result-output').value;
-        if(!text) return;
-        btn.innerText = "⏹️ Stop";
-        speakText(text, () => btn.innerText = "🔊 Listen");
     }
 </script>
 </body>

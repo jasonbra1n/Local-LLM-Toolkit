@@ -8,6 +8,17 @@
     --hover-bg: #313244;
 }
 
+/* Light Theme Override */
+[data-theme="light"] {
+    --bg-color: #eff1f5;
+    --card-bg: #e6e9ef;
+    --text-color: #4c4f69;
+    --accent-color: #1e66f5; /* Blue */
+    --button-hover: #7287fd;
+    --input-bg: #dce0e8;
+    --hover-bg: #ccd0da;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);
@@ -83,6 +94,26 @@ textarea, input[type="text"], input[type="password"], input[type="number"], sele
     margin-bottom: 20px;
     resize: vertical;
 }
+
+/* Code Blocks & Typography */
+pre {
+    background-color: #11111b;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    border: 1px solid #45475a;
+    margin: 10px 0;
+}
+
+code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9em;
+    color: #f38ba8; /* Red/Pinkish for code */
+}
+
+[data-theme="light"] pre { background-color: #dce0e8; border-color: #bcc0cc; }
+[data-theme="light"] code { color: #d20f39; }
+[data-theme="light"] .thinking-box { background-color: #dce0e8; border-color: #bcc0cc; color: #4c4f69; }
 
 /* Buttons */
 button {

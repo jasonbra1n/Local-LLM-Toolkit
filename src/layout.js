@@ -6,7 +6,7 @@
 
 const APP_CONFIG = {
     name: "Local LLM Toolkit",
-    version: "v0.1.3",
+    version: "v0.1.4",
     tools: [
         { name: "Chat Interface", link: "chat_interface.html", icon: "💬" },
         { name: "Prompt Generator", link: "prompt_generator.html", icon: "📝" },
@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </li>
                 <li><a href="settings.html">⚙️ Settings</a></li>
+                <li><button id="theme-toggle" style="background:none; border:none; cursor:pointer; font-size:1.2rem; padding:0; width:auto;" title="Toggle Theme">🌙</button></li>
             </ul>
         </nav>
     `;
@@ -84,7 +85,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 7. Inject/Standardize Status Bar
+    // 7. Theme Toggler Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggle.innerText = savedTheme === 'dark' ? '🌙' : '☀️';
+
+    themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        themeToggle.innerText = next === 'dark' ? '🌙' : '☀️';
+    });
+
+    // 8. Inject/Standardize Status Bar
     // This ensures every page has the connection status and dynamic target IP display.
     const container = document.querySelector('.container');
     const h1 = container ? container.querySelector('h1') : null;

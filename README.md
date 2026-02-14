@@ -30,7 +30,7 @@ A suite of privacy-focused, local-first AI tools designed to run entirely in you
   - **Multi-Provider Support**: Switch between LM Studio, Ollama, and Google Gemini.
   - **Control**: Stop generation at any time.
   - **Persistence**: Save generated Agents and Skills directly to `.md` files.
-  - **Text-to-Speech**: Listen to generated output using native browser speech synthesis.
+  - **Text-to-Speech**: Listen to generated output using native browser speech synthesis or external APIs (OpenAI/Local).
 
 ## 🚀 Getting Started
 

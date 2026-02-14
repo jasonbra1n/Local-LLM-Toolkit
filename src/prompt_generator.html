@@ -33,7 +33,8 @@
 
     <div class="output-area" id="output-container" style="display:none;">
         <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
-        <button class="speak-btn" onclick="speakOutput()" style="margin-right: 5px;">🔊 Listen</button>
+        <button id="speak-btn" class="speak-btn" style="margin-right: 5px;">🔊 Listen</button>
+        <button id="tts-stop-btn" class="speak-btn" style="margin-right: 5px; display:none;">⏹️ Stop</button>
         <div id="thinking-container" style="display:none;">
             <div class="thinking-header" onclick="toggleThinking()">Reasoning Process</div>
             <div id="thinking-content" class="thinking-box"></div>
@@ -55,10 +56,15 @@
     4. Output ONLY the system prompt text. Do not include conversational filler like "Here is your prompt".`;
 
     let abortController = null;
+    let tts = null;
 
     // Check connection on load
     window.onload = async () => {
         await loadModels(getConfig());
+        tts = new TTSController({
+            getText: () => document.getElementById('result-output').value,
+            labels: { start: "🔊 Listen", pause: "⏸️ Pause", resume: "▶️ Resume" }
+        });
     };
 
     async function generatePrompt() {
@@ -144,7 +150,7 @@
     function stopGeneration() {
         if (abortController) {
             abortController.abort();
-            stopSpeech();
+            if (tts) tts.stop();
         }
     }
 
@@ -161,18 +167,6 @@
         copyText.setSelectionRange(0, 99999); 
         navigator.clipboard.writeText(copyText.value);
         alert("Copied to clipboard!");
-    }
-    function speakOutput() {
-        const btn = document.querySelector('.speak-btn');
-        if (btn.innerText.includes("Stop")) {
-            stopSpeech();
-            btn.innerText = "🔊 Listen";
-            return;
-        }
-        const text = document.getElementById('result-output').value;
-        if(!text) return;
-        btn.innerText = "⏹️ Stop";
-        speakText(text, () => btn.innerText = "🔊 Listen");
     }
 </script>
 

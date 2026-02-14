@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [v0.1.4] - 2026-02-14
+
+### Added
+- **TTS**: Added support for External TTS endpoints (OpenAI, AllTalk, Piper) in `src/utils.js`.
+- **TTS**: Added `pauseSpeech()` and `resumeSpeech()` to `src/utils.js` for playback control.
+- **TTS**: Standardized TTS UI across all 13 supported tools with Play/Pause/Stop controls using `TTSController`.
+- **Settings**: Added configuration UI for TTS Provider selection (Browser vs. External), API Key, and Voice ID.
+- **UI**: Added Light/Dark Theme Switcher to the Navigation Bar.
+- **UI**: Added basic styling for `pre` and `code` blocks in `style.css`.
+
 ## [v0.1.3] - 2026-02-12
 
 ### Added

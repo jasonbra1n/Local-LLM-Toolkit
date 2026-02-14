@@ -348,11 +348,59 @@ function setPreferredVoice(voiceName) {
 }
 
 /**
- * Speaks the provided text using the browser's native Web Speech API.
+ * Speaks the provided text using the browser's native Web Speech API
+ * OR an external TTS endpoint (OpenAI compatible).
  * @param {string} text - The text to read aloud.
  * @param {Function} [onEnd] - Optional callback when speech finishes.
  */
-function speakText(text, onEnd) {
+async function speakText(text, onEnd) {
+    // 1. Check for External TTS Config (OpenAI / Local Server)
+    const ttsProvider = localStorage.getItem('tts_provider') || 'browser'; // 'browser', 'openai', 'local'
+    const ttsUrl = localStorage.getItem('tts_url') || ""; // e.g. http://127.0.0.1:8080/v1/audio/speech
+    const ttsKey = localStorage.getItem('tts_api_key') || "";
+    const ttsModel = localStorage.getItem('tts_model') || "tts-1";
+    const ttsVoice = localStorage.getItem('tts_voice') || "alloy";
+
+    if (ttsProvider !== 'browser' && ttsUrl) {
+        try {
+            stopSpeech(); // Stop any current audio
+            
+            const headers = { "Content-Type": "application/json" };
+            if (ttsKey) headers["Authorization"] = `Bearer ${ttsKey}`;
+
+            const response = await fetch(ttsUrl, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify({
+                    model: ttsModel,
+                    input: text,
+                    voice: ttsVoice
+                })
+            });
+
+            if (!response.ok) throw new Error(`TTS API Error: ${response.status}`);
+
+            const blob = await response.blob();
+            const audioUrl = URL.createObjectURL(blob);
+            const audio = new Audio(audioUrl);
+            
+            audio.onended = () => {
+                if (onEnd) onEnd();
+                URL.revokeObjectURL(audioUrl);
+            };
+            audio.onerror = onEnd;
+            
+            window._currentAudio = audio; // Store reference to stop it later
+            audio.play();
+            return;
+
+        } catch (e) {
+            console.error("External TTS failed, falling back to Browser:", e);
+            // Fallback to browser logic below
+        }
+    }
+
+    // 2. Browser Native Fallback
     if (!('speechSynthesis' in window)) {
         console.warn("Web Speech API not supported.");
         return;
@@ -390,4 +438,89 @@ function speakText(text, onEnd) {
 
 function stopSpeech() {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    if (window._currentAudio) {
+        window._currentAudio.pause();
+        window._currentAudio = null;
+    }
+}
+
+/**
+ * Pauses the current speech (Browser or External).
+ */
+function pauseSpeech() {
+    if (window._currentAudio) window._currentAudio.pause();
+    else if ('speechSynthesis' in window && window.speechSynthesis.speaking) window.speechSynthesis.pause();
+}
+
+/**
+ * Resumes the current speech (Browser or External).
+ */
+function resumeSpeech() {
+    if (window._currentAudio) window._currentAudio.play();
+    else if ('speechSynthesis' in window && window.speechSynthesis.paused) window.speechSynthesis.resume();
+}
+
+/**
+ * Controller class to manage TTS UI (Play/Pause/Stop) buttons.
+ * Reduces code duplication across tools.
+ */
+class TTSController {
+    /**
+     * @param {Object} config
+     * @param {string} [config.speakId] - ID of the Play/Pause button (default: 'speak-btn')
+     * @param {string} [config.stopId] - ID of the Stop button (default: 'tts-stop-btn')
+     * @param {Function} config.getText - Function returning the text to speak
+     * @param {Object} [config.labels] - Custom button labels { start, pause, resume }
+     * @param {string} [config.stopDisplay] - CSS display type for stop button (default: 'inline-block')
+     */
+    constructor(config) {
+        this.speakBtn = document.getElementById(config.speakId || 'speak-btn');
+        this.stopBtn = document.getElementById(config.stopId || 'tts-stop-btn');
+        this.getText = config.getText;
+        
+        this.labels = config.labels || { start: "🔊", pause: "⏸️", resume: "▶️" };
+        this.stopDisplay = config.stopDisplay || 'inline-block';
+
+        this.isSpeaking = false;
+        this.isPaused = false;
+
+        // Bind methods to instance
+        this.toggle = this.toggle.bind(this);
+        this.stop = this.stop.bind(this);
+
+        if (this.speakBtn) this.speakBtn.onclick = this.toggle;
+        if (this.stopBtn) this.stopBtn.onclick = this.stop;
+    }
+
+    toggle() {
+        if (!this.isSpeaking && !this.isPaused) {
+            // Start
+            const text = this.getText();
+            if (!text) return;
+
+            this.isSpeaking = true;
+            this.speakBtn.innerText = this.labels.pause;
+            if (this.stopBtn) this.stopBtn.style.display = this.stopDisplay;
+            
+            speakText(text, () => this.stop());
+        } else if (this.isSpeaking && !this.isPaused) {
+            // Pause
+            pauseSpeech();
+            this.isPaused = true;
+            this.speakBtn.innerText = this.labels.resume;
+        } else if (this.isPaused) {
+            // Resume
+            resumeSpeech();
+            this.isPaused = false;
+            this.speakBtn.innerText = this.labels.pause;
+        }
+    }
+
+    stop() {
+        stopSpeech();
+        this.isSpeaking = false;
+        this.isPaused = false;
+        if (this.speakBtn) this.speakBtn.innerText = this.labels.start;
+        if (this.stopBtn) this.stopBtn.style.display = 'none';
+    }
 }

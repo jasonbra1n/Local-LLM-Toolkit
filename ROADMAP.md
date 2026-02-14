@@ -2,6 +2,7 @@
 
 ## 🚀 Current Status
 **Focus: v0.2.0 - Orchestration & Polish**
+*Latest Release: v0.1.4 (TTS Overhaul & Theme Switcher)*
 
 > 📜 **Archive**: See docs/ROADMAP_ARCHIVE_v0.1.md for completed v0.1.x features.
 

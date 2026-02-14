@@ -57,7 +57,8 @@
     <div class="output-area" id="output-container" style="display:none;">
         <button class="save-btn" onclick="saveToFile()">Save Bible</button>
         <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
-        <button class="speak-btn" onclick="speakOutput()" style="margin-right: 5px;">🔊 Listen</button>
+        <button id="speak-btn" class="speak-btn" style="margin-right: 5px;">🔊 Listen</button>
+        <button id="tts-stop-btn" class="speak-btn" style="margin-right: 5px; display:none;">⏹️ Stop</button>
         <div id="thinking-container" style="display:none;">
             <div class="thinking-header" onclick="toggleThinking()">Architect's Reasoning</div>
             <div id="thinking-content" class="thinking-box"></div>
@@ -81,9 +82,14 @@
     Format the output in clean Markdown.`;
 
     let abortController = null;
+    let tts = null;
 
     window.onload = async () => {
         await loadModels(getConfig());
+        tts = new TTSController({
+            getText: () => document.getElementById('result-output').value,
+            labels: { start: "🔊 Listen", pause: "⏸️ Pause", resume: "▶️ Resume" }
+        });
     };
 
     async function generateStory() {
@@ -161,7 +167,7 @@
     function stopGeneration() {
         if (abortController) {
             abortController.abort();
-            stopSpeech();
+            if (tts) tts.stop();
         }
     }
 
@@ -194,18 +200,6 @@
     function copyToClipboard() {
         const copyText = document.getElementById("result-output");
         copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied!");
-    }
-    function speakOutput() {
-        const btn = document.querySelector('.speak-btn');
-        if (btn.innerText.includes("Stop")) {
-            stopSpeech();
-            btn.innerText = "🔊 Listen";
-            return;
-        }
-        const text = document.getElementById('result-output').value;
-        if(!text) return;
-        btn.innerText = "⏹️ Stop";
-        speakText(text, () => btn.innerText = "🔊 Listen");
     }
 </script>
 </body>

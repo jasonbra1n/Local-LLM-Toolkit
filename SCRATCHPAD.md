@@ -42,3 +42,21 @@ The following tools have been updated to use `generateText()` and `getConfig()`:
 
 ### 🔊 Audio Features
 - [x] **Text-to-Speech**: Implement `speakText()` in `utils.js` using the Web Speech API.
+- [x] **Controls**: Add `pauseSpeech()` and `resumeSpeech()` to `utils.js`.
+
+#### 🎧 TTS UI Standardization (Play/Pause/Stop)
+Update all tools to use the new `toggleSpeech()` and `stopSpeechUI()` pattern.
+
+- [x] `chat_interface.html`
+- [x] `novel_writer.html`
+- [x] `summarizer.html`
+- [x] `story_architect.html`
+- [x] `prompt_generator.html`
+- [x] `idea_generator.html`
+- [x] `email_polisher.html`
+- [x] `meeting_notes.html`
+- [x] `visual_prompter.html`
+- [x] `project_prompt_builder.html`
+- [x] `youtube_script_writer.html`
+- [x] `quiz_generator.html`
+- [x] `persona_chat.html`

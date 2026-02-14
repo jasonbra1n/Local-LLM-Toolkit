@@ -79,7 +79,10 @@
         <div style="display: flex; flex-direction: column; gap: 5px; width: 100px;">
             <button id="send-btn" onclick="sendMessage()">Send</button>
             <button id="stop-btn" class="stop-btn" onclick="stopGeneration()" style="margin-top: 0; padding: 12px;">Stop</button>
-            <button id="speak-btn" onclick="speakLastResponse()" style="background-color: #45475a;" title="Read Last Response">🔊</button>
+            <div style="display: flex; gap: 5px;">
+                <button id="speak-btn" style="background-color: #45475a; flex: 1; padding: 10px 0;" title="Play/Pause">🔊</button>
+                <button id="tts-stop-btn" style="background-color: #45475a; flex: 1; padding: 10px 0; display: none;" title="Stop Speech">⏹️</button>
+            </div>
         </div>
     </div>
 </div>
@@ -87,9 +90,21 @@
 <script>
     let chatMessages = [];
     let abortController = null;
+    let tts = null;
 
     window.onload = async () => {
         await loadModels(getConfig());
+        tts = new TTSController({
+            getText: () => {
+                const history = document.getElementById('chat-history');
+                const assistantMsgs = history.querySelectorAll('.message.assistant');
+                if (assistantMsgs.length > 0) {
+                    return assistantMsgs[assistantMsgs.length - 1].innerText;
+                }
+                return "";
+            },
+            stopDisplay: 'block'
+        });
     };
 
     function appendMessage(role, text) {
@@ -174,9 +189,8 @@
         );
     }
 
-    function stopGeneration() { if (abortController) abortController.abort(); stopSpeech(); }
+    function stopGeneration() { if (abortController) abortController.abort(); if (tts) tts.stop(); }
     function toggleThinking() { const h = document.querySelector('.thinking-header'); const c = document.getElementById('thinking-content'); h.classList.toggle('collapsed'); c.style.display = h.classList.contains('collapsed') ? 'none' : 'block'; }
-    function speakLastResponse() { const btn = document.getElementById('speak-btn'); if (btn.innerText === "⏹️") { stopSpeech(); btn.innerText = "🔊"; return; } const history = document.getElementById('chat-history'); const assistantMsgs = history.querySelectorAll('.message.assistant'); if (assistantMsgs.length > 0) { const lastMsg = assistantMsgs[assistantMsgs.length - 1]; btn.innerText = "⏹️"; speakText(lastMsg.innerText, () => btn.innerText = "🔊"); } }
 </script>
 </body>
 </html>
