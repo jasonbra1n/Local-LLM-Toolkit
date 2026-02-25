@@ -41,7 +41,11 @@
         </div>
         <div class="col">
             <label>Writing Style:</label>
-            <input type="text" id="style-input" placeholder="e.g. Fast-paced, Atmospheric, First-person">
+            <input type="text" id="style-input" placeholder="e.g. Fast-paced, Atmospheric">
+        </div>
+        <div class="col">
+            <label>Target Word Count:</label>
+            <input type="text" id="wordcount" placeholder="e.g. 2000 words">
         </div>
     </div>
 
@@ -75,7 +79,7 @@
     Guidelines:
     1. **Show, Don't Tell**: Use sensory details and strong imagery.
     2. **Dialogue**: Write natural, character-driven dialogue.
-    3. **Pacing**: Adhere to the requested writing style.
+    3. **Pacing**: Adhere to the requested writing style and target length.
     4. **Context**: Ensure consistency with the provided character profiles and plot outline.
     5. **Output**: Write ONLY the story prose. Do not include meta-commentary.`;
 
@@ -97,6 +101,7 @@
         const context = document.getElementById('context-input').value;
         const chapter = document.getElementById('chapter-focus').value;
         const style = document.getElementById('style-input').value;
+        const wc = document.getElementById('wordcount').value;
         const model = document.getElementById('model-select').value;
 
         if (!context || !chapter) return alert("Please provide the Story Context and Chapter focus.");
@@ -119,7 +124,7 @@
         const globalPersona = localStorage.getItem('default_system_prompt') || "";
         const systemMessage = globalPersona ? `${WRITER_PROMPT}\n\nAdditional Persona/Style Context:\n${globalPersona}` : WRITER_PROMPT;
 
-        const userMessage = `Story Context:\n${context}\n\nTask: Write ${chapter}\nStyle: ${style || "Standard"}`;
+        const userMessage = `Story Context:\n${context}\n\nTask: Write ${chapter}\nTarget Length: ${wc || "Standard Chapter Length"}\nStyle: ${style || "Standard"}`;
         const messages = [{ role: "system", content: systemMessage }, { role: "user", content: userMessage }];
         
         const config = {

@@ -46,6 +46,10 @@
             <label>Approx Word Count:</label>
             <input type="text" id="wordcount" placeholder="e.g. 50,000 words">
         </div>
+        <div class="col">
+            <label>Target Chapters:</label>
+            <input type="number" id="chapter_count" placeholder="e.g. 12" min="1">
+        </div>
     </div>
 
     <button id="generate-btn" onclick="generateStory()">
@@ -76,7 +80,7 @@
     1. **Title Ideas**: 3 catchy options.
     2. **Logline**: A one-sentence summary.
     3. **Character Profiles**: For Protagonist, Antagonist, and key supporting characters (Name, Role, Motivation, Flaw).
-    4. **Detailed Chapter Outline**: A breakdown of at least 10-15 chapters. For each chapter, describe the key event and the "Scene Goal".
+    4. **Detailed Chapter Outline**: A breakdown of the story into chapters. For each chapter, describe the key event and the "Scene Goal".
     5. **Ending**: The desired outcome and resolution.
     
     Format the output in clean Markdown.`;
@@ -97,6 +101,7 @@
         const premise = document.getElementById('premise').value;
         const genre = document.getElementById('genre').value;
         const wc = document.getElementById('wordcount').value;
+        const chapters = document.getElementById('chapter_count').value || "10-15";
         const model = document.getElementById('model-select').value;
 
         if (!premise) return alert("Please enter a premise.");
@@ -123,7 +128,7 @@
         const globalPersona = localStorage.getItem('default_system_prompt') || "";
         const systemMessage = globalPersona ? `${ARCHITECT_PROMPT}\n\nAdditional Persona/Style Context:\n${globalPersona}` : ARCHITECT_PROMPT;
 
-        const userPrompt = `Premise: ${premise}\nGenre/Tone: ${genre}\nTarget Length: ${wc}\n\nPlease generate the Story Bible now.`;
+        const userPrompt = `Premise: ${premise}\nGenre/Tone: ${genre}\nTarget Length: ${wc}\nTarget Chapter Count: ${chapters}\n\nPlease generate the Story Bible now.`;
         const messages = [
             { role: "system", content: systemMessage },
             { role: "user", content: userPrompt }
