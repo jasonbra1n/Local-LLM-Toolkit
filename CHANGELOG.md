@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - **Tools Gallery**: Created `src/tools.html`, a dedicated page listing all tools with descriptions.
+- **Story Architect**: Added "Target Chapters" input field, allowing users to specify the desired number of chapters for the story outline.
+- **Novel Writer**: Added "Target Word Count" input field, enabling users to specify the desired length of the chapter to be written.
 - **Layout**: Added tool descriptions to `APP_CONFIG` in `src/layout.js`.
 
 ### Changed
