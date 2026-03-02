@@ -1,6 +1,6 @@
 # Local LLM Toolkit
 
-![Version](https://img.shields.io/badge/version-v0.1.3-blue)
+![Version](https://img.shields.io/badge/version-v0.1.4-blue)
 
 [**🚀 Live Demo**](https://jasonbra1n.github.io/Local-LLM-Toolkit/src/index.html)
 
