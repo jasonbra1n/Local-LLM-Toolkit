@@ -31,6 +31,25 @@ const APP_CONFIG = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Inject Prism.js for global syntax highlighting
+    const prismCss = document.createElement('link');
+    prismCss.rel = 'stylesheet';
+    prismCss.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css';
+    document.head.appendChild(prismCss);
+
+    const prismJs = document.createElement('script');
+    prismJs.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
+    document.body.appendChild(prismJs);
+
+    // Optional: Add commonly used Prism languages
+    const prismPython = document.createElement('script');
+    prismPython.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js';
+    document.body.appendChild(prismPython);
+
+    const prismBash = document.createElement('script');
+    prismBash.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js';
+    document.body.appendChild(prismBash);
+
     // 2. Build Navbar HTML
     const navHtml = `
         <nav class="navbar">

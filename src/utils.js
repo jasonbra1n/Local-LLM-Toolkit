@@ -524,3 +524,39 @@ class TTSController {
         if (this.stopBtn) this.stopBtn.style.display = 'none';
     }
 }
+
+/**
+ * Lightweight Markdown Parser for basic syntax highlighting support.
+ * Converts code blocks and basic formatting into HTML.
+ * @param {string} text - The raw markdown text
+ * @returns {string} HTML formatted string
+ */
+function parseMarkdown(text) {
+    if (!text) return "";
+    
+    // 1. Code Blocks
+    // Match ```language ... ```
+    let html = text.replace(/```([a-zA-Z0-9+\-_]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+        const languageClass = lang ? `language-${lang}` : 'language-none';
+        // Escape HTML entities inside the code block to prevent browser rendering
+        const escapedCode = code.replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                                .replace(/'/g, '&#39;');
+        return `<pre><code class="${languageClass}">${escapedCode}</code></pre>`;
+    });
+
+    // 2. Inline Code
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // 3. Bold Text
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // 4. Wrap non-block elements in paragraphs (simplistic)
+    // Only wrap lines that aren't inside <pre> or other block elements we just created.
+    // For a chat interface, standard preserving of line breaks using CSS `white-space: pre-wrap` is often simpler.
+    // We'll trust the `white-space: pre-wrap` in the `.message` CSS to handle regular line breaks.
+
+    return html;
+}

@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Developer Guide**: Created `docs/DEVELOPER_GUIDE.md` outlining how to build custom tools using the Vanilla Web Architecture (`utils.js`, `layout.js`).
 - **Tools Gallery**: Created `src/tools.html`, a dedicated page listing all tools with descriptions.
 - **Story Architect**: Added "Target Chapters" input field, allowing users to specify the desired number of chapters for the story outline.
 - **Novel Writer**: Added "Target Word Count" input field, enabling users to specify the desired length of the chapter to be written.
 - **Layout**: Added tool descriptions to `APP_CONFIG` in `src/layout.js`.
 
 ### Changed
+- **UI Polish**: Integrated **Prism.js** globally via `layout.js` to provide consistent syntax highlighting for code blocks across AI responses.
+- **Utils**: Added a lightweight markdown parser `parseMarkdown()` in `utils.js` to handle inline code, bold text, and code blocks efficiently.
+- **Chat Interface**: Updated to use `parseMarkdown()` and trigger `Prism.highlightAllUnder()` for real-time syntax highlighting.
 - **Dashboard**: Refactored `src/index.html` to dynamically generate the tool grid using `APP_CONFIG`, creating a single source of truth for tool definitions.
 - **Navigation**: Updated the "Tools" link in the Navbar to point directly to the new Gallery page (`tools.html`).
 

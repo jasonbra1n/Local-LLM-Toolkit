@@ -194,13 +194,14 @@
                     thinkContent.scrollTop = thinkContent.scrollHeight;
                 } else {
                     fullResponse += content;
-                    assistantBubble.textContent += content;
+                    assistantBubble.innerHTML = parseMarkdown(fullResponse);
                     const history = document.getElementById('chat-history');
                     history.scrollTop = history.scrollHeight;
                 }
             },
             () => { // onComplete
                 chatMessages.push({ role: "assistant", content: fullResponse });
+                if (window.Prism) Prism.highlightAllUnder(assistantBubble);
                 sendBtn.disabled = false; stopBtn.style.display = 'none'; abortController = null;
             },
             (err) => { // onError
